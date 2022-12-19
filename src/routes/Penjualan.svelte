@@ -8,15 +8,17 @@
 
 </script>
 
-<table class="table align-middle mt-3">
-    <tbody>
-        <tr class="fw-bold text-center">
-            {#each listPages as data}
-                <td><button on:click={ () => currentPage = data } type="button" class="btn btn-sm fw-bold">{ data }</button></td>
-            {/each}
-        </tr>
-    </tbody>
-</table>
+<div class="container">
+    <table class="table align-middle mt-3">
+        <tbody>
+            <tr class="fw-bold text-center">
+                {#each listPages as data}
+                    <td><button on:click={ () => currentPage = data } type="button" class="btn btn-sm fw-bold">{ data }</button></td>
+                {/each}
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 {#if currentPage == '👍 Pesanan' }
     <Pesanan />

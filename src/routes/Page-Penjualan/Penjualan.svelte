@@ -3,6 +3,8 @@
     import CurrencyInput from '@canutin/svelte-currency-input';
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { onMount } from "svelte";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { prevent_default } from "svelte/internal";
 
     const globalURL:string = "http://localhost:8080/api/v1/";
 
@@ -66,6 +68,7 @@
     let bayarDebit:number               = null;
     let potonganHarga:number            = null;
     let additionalInformation:string    = null;
+    let totalPaid:number                = null;
 
     function inputToList(eventForm){
         currentItemPlaceholder = {
@@ -107,7 +110,7 @@
     }
 
     async function showMember(keywords){
-        const memberGet = await fetch('http://localhost:8080/api/v1/Search-Member/' + encodeURIComponent(keywords) , {
+        const memberGet = await fetch(globalURL + 'Search-Member/' + encodeURIComponent(keywords) , {
             method : 'GET',
             credentials : 'include'
         });
@@ -116,7 +119,19 @@
         return listOfMembers;
     }
 
-    function awa(){
+    function calculatePaid(){
+        // Total of all payment methods
+        totalPaid = bayarTunai + depositPesanan + eMoney + dpSoPesanan + bayarDebit + bayarKredit + potonganHarga;
+        console.log(currencyFormat.format(totalPaid))
+    }
+
+    async function doPost(){
+        if(cartData == undefined || cartData.length == 0){
+            toast.error("Harap mengisi produk terlebih dahulu!", {
+                position: 'top-right'
+            });
+        }
+
         submittedReceipt = {
             CASHIER : {
                 NIP     : bundlePenjualan.CASHIER.NIP,
@@ -137,20 +152,36 @@
                 POTONGAN    : potonganHarga,
                 TOTAL       : totalPrice
             },
-            KETERANGAN      : additionalInformation
+            KETERANGAN      : additionalInformation,
+            KATEGORI        : 'Retail',
+            TIPE            : 'Penjualan',
+            KEMBALIAN       : totalPrice - totalPaid,
         };
 
-        console.log(submittedReceipt);
+        const postData = await fetch(globalURL + 'Post-Penjualan', {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(submittedReceipt)
+        });
+
+        const serverResponse = await postData.text();
+        console.log(serverResponse);
+        toast.success("Transaksi berhasil disimpan!");
     }
     
 </script>
+
+<Toaster />
 
 <div class="container mt-1">
     <div class="card shadow-sm">
         <div class="card-header">
             <h3 class="card-title">Penjualan Kasir</h3>
             <div class="card-toolbar">
-                <button type="button" on:click={awa} class="btn btn-sm btn-success">
+                <button type="button" on:click={doPost} class="btn btn-sm btn-success">
                     Action
                 </button>
             </div>
@@ -174,7 +205,7 @@
         <button type="submit" hidden class="btn btn-primary">Eastern Man</button>
     </form>
 
-        <div class="table-responsive">
+        <div class="table-responsive mt-4">
             <table class="table table-row-dashed table-row-gray-300 align-middle mt-2">
                 <thead>
                     <tr class="fw-bold">
@@ -192,7 +223,7 @@
                         <td>{ data.KODE }</td>
                         <td>{ data.NAMA }</td>
                         <td>{ currencyFormat.format(data.HARGA) }</td>
-                        <td>{ data.JUMLAH }</td>
+                        <td class="text-center" >{ data.JUMLAH }</td>
                         <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
                         <td>
                             <button type="button" class="btn btn-icon btn-danger" on:click={ () => removeFromList(index) }><i class="las la-trash fs-2"></i></button>
@@ -239,55 +270,75 @@
                             <div class="fv-row mb-0">
                                 <label for="cariMember" class="form-label fs-6 fw-bolder mb-3">Cari Member</label>
                                 <br>
-                                <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." />
+                                <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
                             </div>
                         </div>
                     </div>
 
                     <div class="separator my-5"></div>
 
-                    <div class="row mt-6">
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                            <div class="fv-row mb-0">
-                                <label for="bayarTunai" class="form-label fs-6 fw-bolder mb-3">Bayar Tunai</label>
-                                <CurrencyInput bind:value="{bayarTunai}" locale="id-ID" currency="IDR" />
+                        <div class="row mt-6">
+                            <div class="col-lg-4 mb-4 mb-lg-0">
+                                <div class="fv-row mb-0">
+                                    <label for="bayarTunai" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarTunai) }</label>
+                                    <!-- <CurrencyInput value="{bayarTunai}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="Bayar Tunai" on:keyup={calculatePaid} bind:value="{bayarTunai}" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4 mb-lg-0">
+                                <div class="fv-row mb-0">
+                                    <label for="dpPesanan" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(depositPesanan) }</label>
+                                    <!-- <CurrencyInput value="{depositPesanan}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="Deposit Pesanan" on:keyup={calculatePaid} bind:value="{depositPesanan}" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="fv-row mb-0">
+                                    <label for="eMoney" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(eMoney) }</label>
+                                    <!-- <CurrencyInput value="{eMoney}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="E-Money" on:keyup={calculatePaid} bind:value="{eMoney}" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                            <div class="fv-row mb-0">
-                                <label for="dpPesanan" class="form-label fs-6 fw-bolder mb-3">Deposit Pesanan</label>
-                                <CurrencyInput bind:value="{depositPesanan}" locale="id-ID" currency="IDR" />
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="fv-row mb-0">
-                                <label for="eMoney" class="form-label fs-6 fw-bolder mb-3">Bayar E-Money</label>
-                                <CurrencyInput bind:value="{eMoney}" locale="id-ID" currency="IDR" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="row mt-6">
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                            <div class="fv-row mb-0">
-                                <label for="dpSoPesanan" class="form-label fs-6 fw-bolder mb-3">DP/SO Pesanan</label>
-                                <CurrencyInput bind:value="{dpSoPesanan}" locale="id-ID" currency="IDR" />
+                        <div class="row mt-6">
+                            <div class="col-lg-4 mb-4 mb-lg-0">
+                                <div class="fv-row mb-0">
+                                    <label for="dpSoPesanan" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(dpSoPesanan) }</label>
+                                    <!-- <CurrencyInput value="{dpSoPesanan}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="DP / SO Pesanan" on:keyup={calculatePaid} bind:value="{dpSoPesanan}" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4 mb-lg-0">
+                                <div class="fv-row mb-0">
+                                    <label for="bayarKredit" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarKredit) }</label>
+                                    <!-- <CurrencyInput value="{bayarKredit}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="Bayar Kredit" on:keyup={calculatePaid} bind:value="{bayarKredit}" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="fv-row mb-0">
+                                    <label for="bayarDebit" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarDebit) }</label>
+                                    <!-- <CurrencyInput value="{bayarDebit}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" placeholder="Bayar Debit" on:keyup={calculatePaid} bind:value="{bayarDebit}" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                            <div class="fv-row mb-0">
-                                <label for="bayarKredit" class="form-label fs-6 fw-bolder mb-3">Bayar Kredit</label>
-                                <CurrencyInput bind:value="{bayarKredit}" locale="id-ID" currency="IDR" />
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="fv-row mb-0">
-                                <label for="bayarDebit" class="form-label fs-6 fw-bolder mb-3">Bayar Debit</label>
-                                <CurrencyInput bind:value="{bayarDebit}" locale="id-ID" currency="IDR" />
-                            </div>
-                        </div>
-                    </div>
 
+                        <div class="row mt-6">
+                            <div class="col-lg-4 mb-4 mb-lg-0">
+                                <div class="fv-row mb-0">
+                                    <label for="potongan" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(potonganHarga) }</label>
+                                    <!-- <CurrencyInput value="{potonganHarga}" locale="id-ID" currency="IDR" /> -->
+                                    <input type="number" class="form-control" on:keyup={calculatePaid} placeholder="Potongan Harga" bind:value="{potonganHarga}" />
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="fv-row mb-0">
+                                    <!-- Fill with something else.. -->
+                                </div>
+                            </div>
+                        </div>
 
                 </div>
                 <div class="col-sm-4 col-md-4 col-lg-4">
@@ -297,17 +348,25 @@
                         <textarea class="form-control " rows="3" placeholder="Keterangan Untuk Transaksi Ini" bind:value={additionalInformation} ></textarea>
                     </div>
 
-                    <div class="separator my-5"></div>
-
-                    <div class="fv-row mb-2">
-                        <label for="potongan" class="form-label fs-6 fw-bolder mb-3">Potongan Harga</label>
-                        <CurrencyInput bind:value="{potonganHarga}" locale="id-ID" currency="IDR" />
+                    <div class="row">
+                        <div class="col">
+                            <div class="my-4">
+                                <label for="keteranganTambahan" class="form-label fs-6 fw-bolder">Total Tagihan</label>
+                                <input type="text" class="form-control form-control-sm border-0 bg-danger fw-bolder text-white" readonly value="{ currencyFormat.format(totalPrice) }" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="my-4">
+                                <label for="keteranganTambahan" class="form-label fs-6 fw-bolder">Pembayaran</label>
+                                <input type="text" class="form-control form-control-sm border-0 bg-warning fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid) }" />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-1">
-                        <label for="keteranganTambahan" class="form-label fs-6 fw-bolder mb-3">Total</label>
-                        <textarea class="form-control border-0 fs-1 bg-warning fw-bolder text-dark" readonly>{ currencyFormat.format(totalPrice) }</textarea>
-                </div>
+                    <div class="my-5">
+                        <label for="keteranganTambahan" class="form-label fs-6 fw-bolder">Sisa Tagihan</label>
+                        <input type="text" class="form-control form-control-sm border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPrice - totalPaid) }" />
+                    </div>
 
                 </div>
             </div>
