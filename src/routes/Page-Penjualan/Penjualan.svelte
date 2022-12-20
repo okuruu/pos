@@ -1,10 +1,8 @@
 <script lang="ts">
     import AutoComplete from "simple-svelte-autocomplete"
-    import CurrencyInput from '@canutin/svelte-currency-input';
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { onMount } from "svelte";
     import toast, { Toaster } from 'svelte-french-toast';
-    import { prevent_default } from "svelte/internal";
 
     const globalURL:string = "http://localhost:8080/api/v1/";
 
@@ -71,6 +69,7 @@
     let totalPaid:number                = null;
 
     function inputToList(eventForm){
+        // @ts-ignore
         currentItemPlaceholder = {
             KODE        : currentItem.KODE,
             NAMA        : currentItem.NAMA,
@@ -122,7 +121,6 @@
     function calculatePaid(){
         // Total of all payment methods
         totalPaid = bayarTunai + depositPesanan + eMoney + dpSoPesanan + bayarDebit + bayarKredit + potonganHarga;
-        console.log(currencyFormat.format(totalPaid))
     }
 
     async function doPost(){
@@ -150,12 +148,12 @@
                 KREDIT      : bayarKredit,
                 DEBIT       : bayarDebit,
                 POTONGAN    : potonganHarga,
-                TOTAL       : totalPrice
+                TOTAL       : totalPrice,
             },
             KETERANGAN      : additionalInformation,
             KATEGORI        : 'Retail',
             TIPE            : 'Penjualan',
-            KEMBALIAN       : totalPrice - totalPaid,
+            KEMBALIAN       : totalPaid - totalPrice,
         };
 
         const postData = await fetch(globalURL + 'Post-Penjualan', {
@@ -166,9 +164,6 @@
             credentials: 'include',
             body: JSON.stringify(submittedReceipt)
         });
-
-        const serverResponse = await postData.text();
-        console.log(serverResponse);
         toast.success("Transaksi berhasil disimpan!");
     }
     
@@ -182,7 +177,7 @@
             <h3 class="card-title">Penjualan Kasir</h3>
             <div class="card-toolbar">
                 <button type="button" on:click={doPost} class="btn btn-sm btn-success">
-                    Action
+                    Simpan Transaksi
                 </button>
             </div>
         </div>
@@ -223,7 +218,7 @@
                         <td>{ data.KODE }</td>
                         <td>{ data.NAMA }</td>
                         <td>{ currencyFormat.format(data.HARGA) }</td>
-                        <td class="text-center" >{ data.JUMLAH }</td>
+                        <td>{ data.JUMLAH }</td>
                         <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
                         <td>
                             <button type="button" class="btn btn-icon btn-danger" on:click={ () => removeFromList(index) }><i class="las la-trash fs-2"></i></button>
@@ -364,8 +359,8 @@
                     </div>
 
                     <div class="my-5">
-                        <label for="keteranganTambahan" class="form-label fs-6 fw-bolder">Sisa Tagihan</label>
-                        <input type="text" class="form-control form-control-sm border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPrice - totalPaid) }" />
+                        <label for="keteranganTambahan" class="form-label fs-6 fw-bolder">Kembalian</label>
+                        <input type="text" class="form-control form-control-sm border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid - totalPrice ) }" />
                     </div>
 
                 </div>
