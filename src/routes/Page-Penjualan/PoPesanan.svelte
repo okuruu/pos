@@ -21,15 +21,15 @@
         STOK    : null,
         CASHIER : null,
     };
-    let listOfSales = [];
-    let listOfPromo = [];
+    let listOfSales                     = [];
+    let listOfPromo                     = [];
+    let availableOrders                 = [];
+    let indexAvailableOrders:number     = null; 
 
     onMount(async () => {
         const response = await fetch(globalURL + 'Bundle-Penjualan', {
             method : 'POST',
-            headers : {
-                'Content-Type' : 'application/json'
-            },
+            headers : { 'Content-Type' : 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
                 tipePenjualan   : 'Stok-Outlet',
@@ -47,7 +47,20 @@
         };
         listOfSales = serverData.SALES;
         listOfPromo = serverData.KODE_PROMO;
+
+        const availablePurchaseOrders = await fetch(globalURL + 'Available-Purchase-Orders', {
+            method: 'GET',
+            headers: { 'Content-Type' : 'application/json' },
+            credentials: 'include'
+        });
+        availableOrders = await availablePurchaseOrders.json();
     });
+
+    function changeCurrentOrder(){
+        // console.log(availableOrders);
+        console.log(availableOrders[indexAvailableOrders].DETAIL)
+        cartData = availableOrders[indexAvailableOrders].DETAIL;
+    }
 
     // Input to cart
     let currentItem:string      = null;
@@ -177,8 +190,11 @@
             <div class="row">
                 <div class="col">
                     <label for="chooseTransaction" class="form-label fw-bold">Pilih Nomor Transaksi</label>
-                    <select class="form-select">
+                    <select bind:value={ indexAvailableOrders } on:change={ changeCurrentOrder } class="form-select">
                         <option value="">Pilih Nomor Transaksi</option>
+                        {#each availableOrders as ordersID, index }
+                            <option value="{ index }">{ ordersID.KODE }</option>
+                        {/each}
                     </select>
                 </div>
                 <div class="col">
