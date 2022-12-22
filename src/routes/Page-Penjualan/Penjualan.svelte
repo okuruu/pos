@@ -74,6 +74,7 @@
             KODE        : currentItem.KODE,
             NAMA        : currentItem.NAMA,
             HARGA       : currentItem.HARGA,
+            SATUAN      : currentItem.SATUAN,
             JUMLAH      : currentQuantity,
             TOTAL_HARGA : currentItem.HARGA * currentQuantity
         };
@@ -86,6 +87,7 @@
             KODE            : currentItemPlaceholder.KODE,
             NAMA            : currentItemPlaceholder.NAMA,
             HARGA           : currentItemPlaceholder.HARGA,
+            SATUAN          : currentItemPlaceholder.SATUAN,
             JUMLAH          : currentItemPlaceholder.JUMLAH,
             TOTAL_HARGA     : currentItemPlaceholder.TOTAL_HARGA,
         }];
@@ -154,6 +156,7 @@
             KATEGORI        : 'Retail',
             TIPE            : 'Penjualan',
             KEMBALIAN       : totalPaid - totalPrice,
+            PLATFORM        : 'Web'
         };
 
         const postData = await fetch(globalURL + 'Post-Penjualan', {
@@ -206,6 +209,7 @@
                     <tr class="fw-bold">
                         <th>Kode Item</th>
                         <th>Nama Produk</th>
+                        <th>Satuan</th>
                         <th>Harga</th>
                         <th>Jumlah</th>
                         <th>Total Harga</th>
@@ -217,6 +221,7 @@
                     <tr>
                         <td>{ data.KODE }</td>
                         <td>{ data.NAMA }</td>
+                        <td>{ data.SATUAN }</td>
                         <td>{ currencyFormat.format(data.HARGA) }</td>
                         <td>{ data.JUMLAH }</td>
                         <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>

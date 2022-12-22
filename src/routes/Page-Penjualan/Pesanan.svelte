@@ -69,12 +69,17 @@
     let additionalInformation:string    = null;
     let totalPaid:number                = null;
 
+    // Informasi Checkout
+    let jamPengambilan:string   = null;
+    let kontakPemesanan:string  = null;
+
     function inputToList(eventForm){
         // @ts-ignore
         currentItemPlaceholder = {
             KODE        : currentItem.KODE,
             NAMA        : currentItem.NAMA,
             HARGA       : currentItem.HARGA,
+            SATUAN      : currentItem.SATUAN,
             JUMLAH      : currentQuantity,
             TOTAL_HARGA : currentItem.HARGA * currentQuantity
         };
@@ -86,6 +91,7 @@
         cartData = [...cartData, {
             KODE            : currentItemPlaceholder.KODE,
             NAMA            : currentItemPlaceholder.NAMA,
+            SATUAN          : currentItemPlaceholder.SATUAN,
             HARGA           : currentItemPlaceholder.HARGA,
             JUMLAH          : currentItemPlaceholder.JUMLAH,
             TOTAL_HARGA     : currentItemPlaceholder.TOTAL_HARGA,
@@ -155,6 +161,9 @@
             KATEGORI        : 'Non Retail',
             TIPE            : 'Pesanan',
             KEMBALIAN       : totalPaid - totalPrice,
+            PLATFORM        : 'Web',
+            JAM_PESAN       : jamPengambilan,
+            KONTAK          : kontakPemesanan
         };
 
         const postData = await fetch(globalURL + 'Post-Penjualan', {
@@ -212,6 +221,7 @@
                     <tr class="fw-bold">
                         <th>Kode Item</th>
                         <th>Nama Produk</th>
+                        <th>Satuan</th>
                         <th>Harga</th>
                         <th>Jumlah</th>
                         <th>Total Harga</th>
@@ -223,6 +233,7 @@
                     <tr>
                         <td>{ data.KODE }</td>
                         <td>{ data.NAMA }</td>
+                        <td>{ data.SATUAN }</td>
                         <td>{ currencyFormat.format(data.HARGA) }</td>
                         <td>{ data.JUMLAH }</td>
                         <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
@@ -339,7 +350,12 @@
 
                     <div class="mt-5">
                         <label for="jamPengambilan" class="form-label fs-6 fw-bolder mb-3">Jam Pengambilan</label>
-                        <input type="datetime-local" class="form-control form-control-sm" required />
+                        <input type="datetime-local" bind:value={jamPengambilan} class="form-control form-control-sm" required />
+                    </div>
+
+                    <div class="mt-5">
+                        <label for="kontakPemesanan" class="form-label fs-6 fw-bolder mb-3">Kontak Pemesanan</label>
+                        <input type="number" bind:value={kontakPemesanan} class="form-control form-control-sm" placeholder="08xxxxx" required />
                     </div>
 
                     <div class="mt-5">
