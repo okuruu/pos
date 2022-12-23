@@ -1,30 +1,33 @@
 <script lang="ts">
     import AutoComplete from "simple-svelte-autocomplete"
-    import { currencyFormat } from "../../lib/currencyFormatter";
-    import { onMount } from "svelte";
-    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter"
+    import { onMount } from "svelte"
+    import toast, { Toaster } from 'svelte-french-toast'
 
-    const globalURL:string = "http://localhost:8080/api/v1/";
+    const globalURL:string = "http://localhost:8080/api/v1/"
 
-    let productInput;
-    let currentSession  = null;
+    let productInput
+    let currentSession  = null
 
-    let selectedMembers:string  = null;
-    let selectedSales:string    = "";
-    let selectedPromo:string    = "";
+    let selectingOrders:boolean = false
 
-    let listOfMembers = [];
+    let selectedMembers:string  = null
+    let selectedSales:string    = ""
+    let selectedPromo:string    = ""
+
+    let listOfMembers = []
 
     let bundlePenjualan = {
         PROMO   : null,
         SALES   : null,
         STOK    : null,
         CASHIER : null,
-    };
-    let listOfSales                     = [];
-    let listOfPromo                     = [];
-    let availableOrders                 = [];
-    let indexAvailableOrders:number     = null; 
+    }
+    let listOfSales                     = []
+    let listOfPromo                     = []
+    let availableOrders                 = []
+    let indexAvailableOrders:number     = null 
+    let uniqueID:string                 = null
 
     onMount(async () => {
         const response = await fetch(globalURL + 'Bundle-Penjualan', {
@@ -36,50 +39,59 @@
             })
         })
 
-        const serverData = await response.json();
+        const serverData = await response.json()
 
-        currentSession  = serverData.ACTIVE;
+        currentSession  = serverData.ACTIVE
         bundlePenjualan = {
             PROMO   : serverData.KODE_PROMO,
             SALES   : serverData.SALES,
             STOK    : serverData.STOK,
             CASHIER : serverData.ACTIVE
-        };
-        listOfSales = serverData.SALES;
-        listOfPromo = serverData.KODE_PROMO;
+        }
+        listOfSales = serverData.SALES
+        listOfPromo = serverData.KODE_PROMO
 
         const availablePurchaseOrders = await fetch(globalURL + 'Available-Purchase-Orders', {
             method: 'GET',
             headers: { 'Content-Type' : 'application/json' },
             credentials: 'include'
-        });
-        availableOrders = await availablePurchaseOrders.json();
-    });
+        })
+        availableOrders = await availablePurchaseOrders.json()
+    })
 
     function changeCurrentOrder(){
-        // console.log(availableOrders);
-        console.log(availableOrders[indexAvailableOrders].DETAIL)
-        cartData = availableOrders[indexAvailableOrders].DETAIL;
+        selectingOrders = true
+        cartData        = availableOrders[indexAvailableOrders].DETAIL
+        totalPrice      = availableOrders[indexAvailableOrders].HARGA
+        uniqueID        = availableOrders[indexAvailableOrders].UNIQUE
     }
 
+    function recalculatePrice(cartData){
+        const sumData = cartData.reduce((accumulator, object) => {
+            return accumulator + object.TOTAL_HARGA
+        }, 0)
+        totalPrice = sumData
+    }
+
+
     // Input to cart
-    let currentItem:string      = null;
-    let currentQuantity:number  = null;
-    let currentItemPlaceholder;
-    let cartData                = [];
-    let totalPrice:number       = 0;
-    let submittedReceipt        = [];
+    let currentItem:string      = null
+    let currentQuantity:number  = null
+    let currentItemPlaceholder
+    let cartData                = []
+    let totalPrice:number       = 0
+    let submittedReceipt        = []
 
     // Payment Methods
-    let bayarTunai:number               = null;
-    let depositPesanan:number           = null;
-    let eMoney:number                   = null;
-    let dpSoPesanan:number              = null;
-    let bayarKredit:number              = null;
-    let bayarDebit:number               = null;
-    let potonganHarga:number            = null;
-    let additionalInformation:string    = null;
-    let totalPaid:number                = null;
+    let bayarTunai:number               = null
+    let depositPesanan:number           = null
+    let eMoney:number                   = null
+    let dpSoPesanan:number              = null
+    let bayarKredit:number              = null
+    let bayarDebit:number               = null
+    let potonganHarga:number            = null
+    let additionalInformation:string    = null
+    let totalPaid:number                = null
 
     function inputToList(eventForm){
         // @ts-ignore
@@ -90,9 +102,9 @@
             SATUAN      : currentItem.SATUAN,
             JUMLAH      : currentQuantity,
             TOTAL_HARGA : currentItem.HARGA * currentQuantity
-        };
-        addToList(currentItemPlaceholder);
-        eventForm.target.reset();
+        }
+        addToList(currentItemPlaceholder)
+        eventForm.target.reset()
     }
 
     function addToList(currentItemPlaceholder){
@@ -103,46 +115,39 @@
             SATUAN          : currentItemPlaceholder.SATUAN,
             JUMLAH          : currentItemPlaceholder.JUMLAH,
             TOTAL_HARGA     : currentItemPlaceholder.TOTAL_HARGA,
-        }];
+        }]
 
-        cartData = cartData;
-        recalculatePrice(cartData);
+        cartData = cartData
+        recalculatePrice(cartData)
     }
 
     function removeFromList(index){
-        cartData.splice(index, 1);
-        cartData = cartData;
-        recalculatePrice(cartData);
+        cartData.splice(index, 1)
+        cartData = cartData
+        recalculatePrice(cartData)
     }
 
-    function recalculatePrice(cartData){
-        const sumData = cartData.reduce((accumulator, object) => {
-            return accumulator + object.TOTAL_HARGA;
-        }, 0);
-
-        totalPrice = sumData;
-    }
 
     async function showMember(keywords){
         const memberGet = await fetch(globalURL + 'Search-Member/' + encodeURIComponent(keywords) , {
             method : 'GET',
             credentials : 'include'
-        });
-        const showData = await memberGet.json();
-        listOfMembers = showData;
-        return listOfMembers;
+        })
+        const showData = await memberGet.json()
+        listOfMembers = showData
+        return listOfMembers
     }
 
     function calculatePaid(){
         // Total of all payment methods
-        totalPaid = bayarTunai + depositPesanan + eMoney + dpSoPesanan + bayarDebit + bayarKredit + potonganHarga;
+        totalPaid = bayarTunai + depositPesanan + eMoney + dpSoPesanan + bayarDebit + bayarKredit + potonganHarga
     }
 
     async function doPost(){
         if(cartData == undefined || cartData.length == 0){
             toast.error("Harap mengisi produk terlebih dahulu!", {
                 position: 'top-right'
-            });
+            })
         }
 
         submittedReceipt = {
@@ -167,20 +172,28 @@
             },
             KETERANGAN      : additionalInformation,
             KATEGORI        : 'Retail',
-            TIPE            : 'Penjualan',
+            TIPE            : 'Po Pesanan',
             KEMBALIAN       : totalPaid - totalPrice,
-            PLATFORM        : 'Web'
-        };
+            PLATFORM        : 'Web',
+            ISORDER         : selectingOrders,
+            UNIQUE          : uniqueID
+        }
 
-        const postData = await fetch(globalURL + 'Post-Penjualan', {
+        const postData = await fetch(globalURL + 'PO-Penjualan', {
             method : 'POST',
             headers : {
                 'Content-Type' : 'application/json'
             },
             credentials: 'include',
             body: JSON.stringify(submittedReceipt)
+        }).catch((error) => {
+            toast.error(error)
         });
-        toast.success("Transaksi berhasil disimpan!");
+
+        const postResp = await postData.json();
+
+        console.log(postResp);
+        toast.success("Transaksi berhasil disimpan!")
     }
 </script>
 

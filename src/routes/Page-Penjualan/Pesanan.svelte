@@ -165,7 +165,7 @@
             JAM_PESAN       : jamPengambilan,
             KONTAK          : kontakPemesanan
         };
-
+        console.log(submittedReceipt)
         const postData = await fetch(globalURL + 'Post-Penjualan', {
             method : 'POST',
             headers : {
@@ -177,7 +177,6 @@
 
         const serverResponse    = await postData.json();
         latestTransactionNumber = serverResponse.latestNumber
-
         toast.success("Transaksi berhasil disimpan!");
     }
 
