@@ -3,8 +3,7 @@
     import { currencyFormat } from "../../lib/currencyFormatter";
     import AutoComplete from "simple-svelte-autocomplete"
     import toast, { Toaster } from 'svelte-french-toast';
-
-    const globalURL:string = "http://localhost:8080/api/v1/";
+    import { globalURL } from "../../lib/mainLink";
 
     let productInput;
     let currentSession  = null;
