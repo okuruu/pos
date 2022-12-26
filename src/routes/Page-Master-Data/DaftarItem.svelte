@@ -42,7 +42,7 @@
                     <th>#</th>
                     <th>Kode</th>
                     <th>Nama</th>
-                    <th>Harga</th>
+                    <th>Harga Jual</th>
                     <th>Satuan</th>
                     <th>Stok</th>
                 </tr>

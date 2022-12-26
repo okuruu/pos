@@ -18,27 +18,27 @@
             
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="card-title fw-bold">Master Data POS</h3>
+                    <h3 class="card-title fw-bold">Master Data</h3>
                 </div>
                 <div class="card-body">
                     
-                    <button type="button" on:click={ () => { currentPage = 'daftarItem' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Daftar Item</button>
-                    <button type="button" on:click={ () => { currentPage = 'kartuStok' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Kartu Stok</button>
-                    <button type="button" on:click={ () => { currentPage = 'promo' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Promo</button>
+                    <button type="button" on:click={ () => { currentPage = 'daftarItem' } } class="btn btn-sm w-100 mb-1">Daftar Item</button>
+                    <button type="button" on:click={ () => { currentPage = 'kartuStok' } } class="btn btn-sm w-100 mb-1">Kartu Stok</button>
+                    <button type="button" on:click={ () => { currentPage = 'promo' } } class="btn btn-sm w-100 mb-1">Promo</button>
 
                     <div class="separator my-2"></div>
 
-                    <button type="button" on:click={ () => { currentPage = 'daftarSupplier' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Daftar Supplier</button>
-                    <button type="button" on:click={ () => { currentPage = 'daftarSales' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Daftar Sales</button>
+                    <button type="button" on:click={ () => { currentPage = 'daftarSupplier' } } class="btn btn-sm w-100 mb-1">Daftar Supplier</button>
+                    <button type="button" on:click={ () => { currentPage = 'daftarSales' } } class="btn btn-sm w-100 mb-1">Daftar Sales</button>
 
                     <div class="separator my-2"></div>
 
-                    <button type="button" on:click={ () => { currentPage = 'daftarPelanggan' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Member & Poin</button>
-                    <button type="button" on:click={ () => { currentPage = 'grupPelanggan' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Grup Pelanggan</button>
+                    <button type="button" on:click={ () => { currentPage = 'daftarPelanggan' } } class="btn btn-sm w-100 mb-1">Member & Poin</button>
+                    <button type="button" on:click={ () => { currentPage = 'grupPelanggan' } } class="btn btn-sm w-100 mb-1">Grup Pelanggan</button>
 
                     <div class="separator my-2"></div>
 
-                    <button type="button" on:click={ () => { currentPage = 'deskripsiLain' } } class="btn btn-sm w-100 mb-1"><i class="las la-dragon fs-2 me-2"></i>Satuan & Deskripsi Lain</button>
+                    <button type="button" on:click={ () => { currentPage = 'deskripsiLain' } } class="btn btn-sm w-100 mb-1">Satuan & Deskripsi Lain</button>
 
                 </div>
             </div>
