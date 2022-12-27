@@ -6,6 +6,7 @@
     import Penjualan from './routes/Penjualan.svelte';
     import Persediaan from './routes/Persediaan.svelte';
     import Laporan from './routes/Laporan.svelte';
+    import Custom from './routes/Custom.svelte';
 </script>
 
 <Router>
@@ -23,6 +24,7 @@
                     <Link to="Persediaan" class="btn me-2 fw-bold">Persediaan</Link>
                     <Link to="Akuntansi" class="btn me-2 fw-bold">Akuntansi</Link>
                     <Link to="Laporan" class="btn me-2 fw-bold">Laporan</Link>
+                    <Link to="Custom" class="btn me-2 fw-bold">Custom</Link>
                 </div>
             </div>
             <div class="d-flex align-items-stretch flex-shrink-0">
@@ -52,6 +54,9 @@
             </Route>
             <Route path="Laporan" primary={false}>
                 <Laporan />
+            </Route>
+            <Route path="Custom" primary={false}>
+                <Custom />
             </Route>
         </div>
     </div>

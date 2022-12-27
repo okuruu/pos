@@ -56,6 +56,9 @@
             credentials: 'include'
         })
         availableOrders = await availablePurchaseOrders.json()
+        // @ts-ignore
+        availableOrders = availableOrders.data
+
     })
 
     function changeCurrentOrder(){
@@ -185,13 +188,10 @@
             },
             credentials: 'include',
             body: JSON.stringify(submittedReceipt)
-        }).catch((error) => {
-            toast.error(error)
-        });
+        })
 
         const postResp = await postData.json();
 
-        console.log(postResp);
         toast.success("Transaksi berhasil disimpan!")
     }
 </script>
