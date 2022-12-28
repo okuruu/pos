@@ -5,6 +5,7 @@
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
 
+    let currentDate:string      = 'Fetching..'
     let transaksiLama
     let dataRekap               = []
     let dataDetail              = []
@@ -15,13 +16,11 @@
     onMount( async () => {
         const serverData = await fetch( globalURL + 'Data-Rekap', {
             method: 'POST',
-            headers: { 'Content-Type' : 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({
-                NIP : userResponse.nip
-            })
         })
         const serverResponse    = await serverData.json()
+
+        currentDate             = serverResponse.tanggal
         dataRekap               = serverResponse.data
         totalTransaksi          = serverResponse.totalTransaksi
         totalBayar              = serverResponse.totalBayar
@@ -56,6 +55,7 @@
         })
         const dayReportResponse = await dayReport.json()
 
+        currentDate             = dayReportResponse.tanggal
         dataRekap               = dayReportResponse.data
         totalTransaksi          = dayReportResponse.totalTransaksi
         totalBayar              = dayReportResponse.totalBayar
@@ -68,7 +68,7 @@
 
 <div class="card shadow-sm my-7">
     <div class="card-header">
-        <h3 class="card-title fw-bold">Perbaikan Transaksi</h3>
+        <h3 class="card-title fw-bold">Perbaikan Transaksi  - <span class="text-danger px-2"> { currentDate } </span> </h3>
         <div class="card-toolbar">
             <form on:submit|preventDefault={lihatTransaksiLama}>
                 <div class="row">
@@ -90,6 +90,7 @@
                     <tr class="fw-bold">
                         <th>#</th>
                         <th>Tanggal Transaksi</th>
+                        <th>Atas Nama</th>
                         <th>No. Transaksi</th>
                         <th>Kategori</th>
                         <th>Total Transaksi</th>
@@ -103,6 +104,7 @@
                         <tr>
                             <td>{ index + 1 }</td>
                             <td>{ data.CREATED_AT } WIB</td>
+                            <td>{ data.NAMA }</td>
                             <td>{ data.NOMOR_TRANSAKSI }</td>
                             <td>{ data.KATEGORI }</td>
                             <td>{ currencyFormat.format(data.TOTAL_TRANSAKSI) }</td>

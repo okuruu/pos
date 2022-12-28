@@ -100,18 +100,18 @@
         recalculatePrice(cartData);
     }
 
-    function removeFromList(index){
-        cartData.splice(index, 1);
-        cartData = cartData;
-        recalculatePrice(cartData);
-    }
-
     function recalculatePrice(cartData){
         const sumData = cartData.reduce((accumulator, object) => {
             return accumulator + object.TOTAL_HARGA;
         }, 0);
 
         totalPrice = sumData;
+    }
+
+    function removeFromList(index){
+        cartData.splice(index, 1);
+        cartData = cartData;
+        recalculatePrice(cartData);
     }
 
     async function showMember(keywords){
