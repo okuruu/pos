@@ -1,8 +1,11 @@
 <script lang="ts">
     import AutoComplete from "simple-svelte-autocomplete"
+    import CurrencyInput from '@canutin/svelte-currency-input';
     import { onMount } from "svelte";
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
+    import { userResponse } from "../../lib/activeUser";
+    import toast from "svelte-french-toast";
 
     let cartData                = [];
     let totalPrice:number       = 0;
@@ -10,6 +13,7 @@
 
     let listOfSales             = [];
     let listOfPromo             = [];
+    let listOfMembers           = [];
 
     let selectedSales:string    = "";
     let selectedPromo:string    = "";
@@ -61,15 +65,15 @@
     };
 
     // Payment Methods
-    let bayarTunai:number               = null;
-    let depositPesanan:number           = null;
-    let eMoney:number                   = null;
-    let dpSoPesanan:number              = null;
-    let bayarKredit:number              = null;
-    let bayarDebit:number               = null;
-    let potonganHarga:number            = null;
+    let bayarTunai:string               = null;
+    let depositPesanan:string           = null;
+    let eMoney:string                   = null;
+    let dpSoPesanan:string              = null;
+    let bayarKredit:string              = null;
+    let bayarDebit:string               = null;
+    let potonganHarga:string            = null;
+    let totalPaid:any                   = null;
     let additionalInformation:string    = null;
-    let totalPaid:number                = null;
 
     function inputToList(eventForm){
         currentItemPlaceholder = {
@@ -112,9 +116,28 @@
         totalPrice = sumData;
     }
 
+    function currencySanitizer(stringNumber){
+
+        if(stringNumber != null){
+            var isValid = stringNumber.replace(/\D/g,'')
+            return isValid
+        }
+
+        return isValid = 0
+
+    }
+
     function calculatePaid(){
-        // Total of all payment methods
-        totalPaid = bayarTunai + depositPesanan + eMoney + dpSoPesanan + bayarDebit + bayarKredit + potonganHarga;
+
+        const listValue     = [bayarTunai,depositPesanan,eMoney,dpSoPesanan,bayarDebit,bayarKredit,potonganHarga]
+        let addSum:number   = 0
+
+        for(let i = 0 ; i < 7; i++){
+            if(listValue[i] != null){
+                addSum = addSum += parseInt(listValue[i])
+            }
+        }
+        totalPaid = addSum
     }
 
     async function showMember(keywords){
@@ -125,6 +148,45 @@
         const showData = await memberGet.json();
         listOfMembers = showData;
         return listOfMembers;
+    }
+
+    async function simpanTransaksi(){
+
+        /* yang di remove
+        1. PILIH MEMBER
+        2. CARI MEMBER
+        3. POTONGAN EMANG 0
+        4. PROMO TERSEDIA
+        */
+
+        const formPesanan = await fetch(globalURL + 'Pesanan-Pembelian', {
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials : 'include',
+            body : JSON.stringify({
+                NIP         : userResponse.nip ,
+                NAMA        : userResponse.nama ,
+                OUTLET      : userResponse.outlet ,
+                SUPPLIER    : 'Default',
+                KETERANGAN  : additionalInformation ,
+                PEMBAYARAN  : {
+                    TUNAI       : bayarTunai,
+                    DEPOSIT     : depositPesanan,
+                    EMONEY      : eMoney,
+                    DPPESANAN   : dpSoPesanan,
+                    KREDIT      : bayarKredit,
+                    DEBIT       : bayarDebit,
+                    POTONGAN    : potonganHarga,
+                    TOTAL       : totalPrice,
+                },
+                DETAIL      : cartData,
+                PLATFORM    : 'Web'
+            })
+        })
+
+        const pesananResponse = await formPesanan.json()
+        console.log(pesananResponse)
+        toast.success("Data berhasil disimpan")
     }
 
 </script>
@@ -219,10 +281,15 @@
                     </select>                               
                 </div>
 
-                <div class="fv-row mb-2">
+                <div class="fv-row mb-8">
                     <label for="cariMember" class="form-label fs-6 fw-bolder mb-3">Cari Member</label>
                     <br>
                     <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
+                </div>
+
+                <div class="fv-row mb-2">
+                    <label for="keteranganTambahan" class="form-label fs-6 fw-bolder mb-3">Keterangan Tambahan</label>
+                    <textarea class="form-control " rows="3" placeholder="Keterangan Untuk Transaksi Ini" bind:value={additionalInformation} ></textarea>
                 </div>
 
                 <button type="button" class="btn w-100 btn-primary mt-7" data-bs-toggle="modal" data-bs-target="#bayarPesanan">Mbayar</button>
@@ -236,10 +303,10 @@
 <!-- Modal Modul -->
 
 <div class="modal fade" tabindex="-1" id="bayarPesanan">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Modal title</h3>
+                <h3 class="modal-title">Pembayaran</h3>
 
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
@@ -249,43 +316,113 @@
             </div>
 
             <div class="modal-body">
-                
-                <div class="form-group mb-3">
-                    <label for="bayarTunai" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarTunai) }</label>
-                    <input type="number" class="form-control form-control-sm" placeholder="Bayar Tunai" on:keyup={calculatePaid} bind:value="{bayarTunai}" />
+
+                <div class="row mb-2">
+                    <label for="bayarTunai" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Bayar Tunai</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="Bayar Tunai" on:keyup={calculatePaid} bind:value="{bayarTunai}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="dpPesanan" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(depositPesanan) }</label>
-                            <input type="number" class="form-control form-control-sm" placeholder="Deposit Pesanan" on:keyup={calculatePaid} bind:value="{depositPesanan}" />
+                <div class="row mb-2">
+                    <label for="dpPesanan" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Deposit Pesanan</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="Bayar Tunai" on:keyup={calculatePaid} bind:value="{depositPesanan}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="eMoney" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(eMoney) }</label>
-                    <input type="number" class="form-control form-control-sm" placeholder="E-Money" on:keyup={calculatePaid} bind:value="{eMoney}" />
+                <div class="row mb-2">
+                    <label for="eMoney" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Deposit Pesanan</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="E-Money" on:keyup={calculatePaid} bind:value="{eMoney}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="dpSoPesanan" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(dpSoPesanan) }</label>
-                    <input type="number" class="form-control form-control-sm" placeholder="DP / SO Pesanan" on:keyup={calculatePaid} bind:value="{dpSoPesanan}" />
+                <div class="row mb-2">
+                    <label for="dpSoPesanan" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>DP / SO Pesanan</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="DP / SO Pesanan" on:keyup={calculatePaid} bind:value="{dpSoPesanan}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="bayarKredit" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarKredit) }</label>
-                    <input type="number" class="form-control form-control-sm" placeholder="Bayar Kredit" on:keyup={calculatePaid} bind:value="{bayarKredit}" />
+                <div class="row mb-2">
+                    <label for="bayarKredit" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Bayar Kredit</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="Bayar Kredit" on:keyup={calculatePaid} bind:value="{bayarKredit}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="bayarDebit" class="form-label fs-6 fw-bolder mb-3">{ currencyFormat.format(bayarDebit) }</label>
-                    <input type="number" class="form-control form-control-sm" placeholder="Bayar Debit" on:keyup={calculatePaid} bind:value="{bayarDebit}" />
+                <div class="row mb-2">
+                    <label for="group" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Bayar Debit</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control" placeholder="Bayar Kredit" on:keyup={calculatePaid} bind:value="{bayarDebit}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <label for="totalTagihan" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Total Tagihan</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control border-0 bg-danger fw-bolder text-white" readonly value="{ currencyFormat.format(totalPrice) }" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <label for="pembayaran" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Pembayaran</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control border-0 bg-warning fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid) }" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <label for="kembalian" class="col-sm-4 col-form-label fw-bold fs-6">
+                        <span>Kembalian</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid - totalPrice ) }" />
+                    </div>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" on:click={simpanTransaksi} class="btn btn-primary">Simpan</button>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+div.my-currency-input :global(input.currencyInput__formatted) { 
+    display: block;
+    width: 100%;
+    padding: .775rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #5e6278;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #e4e6ef;
+    appearance: none;
+    border-radius: 0.95rem;
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 8%);
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+</style>
