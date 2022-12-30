@@ -1,27 +1,21 @@
 <script lang="ts">
     import AutoComplete from "simple-svelte-autocomplete"
-    import CurrencyInput from '@canutin/svelte-currency-input';
     import { onMount } from "svelte";
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
     import { userResponse } from "../../lib/activeUser";
     import toast from "svelte-french-toast";
 
-    let cartData                = [];
-    let totalPrice:number       = 0;
-    let currentSession  = null;
+    let cartData                = []
+    let totalPrice:number       = 0
+    let currentSession          = null
 
-    let listOfSales             = [];
-    let listOfPromo             = [];
-    let listOfMembers           = [];
-
-    let selectedSales:string    = "";
-    let selectedPromo:string    = "";
-    let selectedMembers:string  = null;
+    let selectedSupplier:string = ""
+    let listSupplier            = []
 
     let productInput;
-    let currentItem:string      = null;
-    let currentQuantity:number  = null;
+    let currentItem:string      = null
+    let currentQuantity:number  = null
     let currentItemPlaceholder  = {
             KODE        : null,
             NAMA        : null,
@@ -29,39 +23,31 @@
             SATUAN      : null,
             JUMLAH      : null,
             TOTAL_HARGA : null
-    };
+    }
 
     onMount(async () => {
-        const response = await fetch(globalURL + 'Bundle-Penjualan', {
-            method : 'POST',
+        const response = await fetch(globalURL + 'Bundle-Pembelian', {
+            method : 'GET',
             headers : {
                 'Content-Type' : 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({
-                tipePenjualan   : 'Master-Produk',
-            })
         })
 
         const serverData = await response.json();
 
         currentSession  = serverData.ACTIVE;
-        bundlePenjualan = {
-            PROMO   : serverData.KODE_PROMO,
-            SALES   : serverData.SALES,
-            STOK    : serverData.STOK,
-            CASHIER : serverData.ACTIVE
+        bundlePembelian = {
+            STOK        : serverData.STOK,
         };
-        listOfSales = serverData.SALES;
-        listOfPromo = serverData.KODE_PROMO;
+
+        listSupplier = serverData.SUPPLIER
+
     })
 
     // Bundling data penjualan
-    let bundlePenjualan = {
-        PROMO   : null,
-        SALES   : null,
+    let bundlePembelian = {
         STOK    : null,
-        CASHIER : null,
     };
 
     // Payment Methods
@@ -73,6 +59,7 @@
     let bayarDebit:string               = null;
     let potonganHarga:string            = null;
     let totalPaid:any                   = null;
+    let jamPengambilan:any              = null;
     let additionalInformation:string    = null;
 
     function inputToList(eventForm){
@@ -116,17 +103,6 @@
         totalPrice = sumData;
     }
 
-    function currencySanitizer(stringNumber){
-
-        if(stringNumber != null){
-            var isValid = stringNumber.replace(/\D/g,'')
-            return isValid
-        }
-
-        return isValid = 0
-
-    }
-
     function calculatePaid(){
 
         const listValue     = [bayarTunai,depositPesanan,eMoney,dpSoPesanan,bayarDebit,bayarKredit,potonganHarga]
@@ -140,24 +116,7 @@
         totalPaid = addSum
     }
 
-    async function showMember(keywords){
-        const memberGet = await fetch(globalURL + 'Search-Member/' + encodeURIComponent(keywords) , {
-            method : 'GET',
-            credentials : 'include'
-        });
-        const showData = await memberGet.json();
-        listOfMembers = showData;
-        return listOfMembers;
-    }
-
     async function simpanTransaksi(){
-
-        /* yang di remove
-        1. PILIH MEMBER
-        2. CARI MEMBER
-        3. POTONGAN EMANG 0
-        4. PROMO TERSEDIA
-        */
 
         const formPesanan = await fetch(globalURL + 'Pesanan-Pembelian', {
             method: 'POST',
@@ -165,9 +124,9 @@
             credentials : 'include',
             body : JSON.stringify({
                 NIP         : userResponse.nip ,
-                NAMA        : userResponse.nama ,
+                NAMA        : userResponse.name ,
                 OUTLET      : userResponse.outlet ,
-                SUPPLIER    : 'Default',
+                SUPPLIER    : selectedSupplier,
                 KETERANGAN  : additionalInformation ,
                 PEMBAYARAN  : {
                     TUNAI       : bayarTunai,
@@ -177,15 +136,17 @@
                     KREDIT      : bayarKredit,
                     DEBIT       : bayarDebit,
                     POTONGAN    : potonganHarga,
+                    KEMBALIAN   : totalPaid - totalPrice,
                     TOTAL       : totalPrice,
                 },
-                DETAIL      : cartData,
-                PLATFORM    : 'Web'
+                DETAIL          : cartData,
+                PLATFORM        : 'Web',
+                JAM_PENGIRIMAN  : jamPengambilan,
+                KATEGORI        : 'Non Retail',
+                TIPE            : 'Pesanan Pembelian'
             })
         })
 
-        const pesananResponse = await formPesanan.json()
-        console.log(pesananResponse)
         toast.success("Data berhasil disimpan")
     }
 
@@ -206,7 +167,7 @@
                         <div class="col-lg-8">
                             <div class="row">
                                 <div class="col-lg-6 fv-row">
-                                    <AutoComplete items="{bundlePenjualan.STOK}" bind:this={productInput} bind:selectedItem="{currentItem}" placeholder="Nama Item" class="form-control form-control-lg mb-3 mb-lg-0" labelFieldName="NAMA" hideArrow="true" />
+                                    <AutoComplete items="{bundlePembelian.STOK}" bind:this={productInput} bind:selectedItem="{currentItem}" placeholder="Nama Item" class="form-control form-control-lg mb-3 mb-lg-0" labelFieldName="NAMA" hideArrow="true" />
                                 </div>
                                 <div class="col-lg-6 fv-row">
                                     <input type="number" min="1" bind:value={currentQuantity} class="form-control form-control-lg" placeholder="Masukkan Jumlah"/>
@@ -262,29 +223,18 @@
             <div class="card-body">
 
                 <div class="fv-row mb-2">
-                    <label for="pilihCS" class="form-label fs-6 fw-bolder mb-3">Pilih CS</label>
-                    <select bind:value={ selectedSales } class="form-select">
-                        <option value="">Pilih CS</option>
-                        {#each listOfSales as salesOnline }
-                            <option value="{salesOnline.CODE}">{ salesOnline.NAMA }</option>
+                    <label for="pilihCS" class="form-label fs-6 fw-bolder mb-3">Pilih Supplier</label>
+                    <select bind:value={ selectedSupplier } class="form-select">
+                        <option value="">Pilih Supplier</option>
+                        {#each listSupplier as data }
+                            <option value="{ data.KODE }">{ data.NAMA }</option>
                         {/each}
                     </select>
                 </div>
 
-                <div class="fv-row mb-2">
-                    <label for="kodePromo" class="form-label fs-6 fw-bolder mb-3">Promo Tersedia</label>
-                    <select bind:value={ selectedPromo } class="form-select">
-                        <option value="">Pilih Kode Promo</option>
-                        {#each listOfPromo as promos }
-                            <option value="{ promos.KODE }">{ promos.KETERANGAN }</option>
-                        {/each}
-                    </select>                               
-                </div>
-
-                <div class="fv-row mb-8">
-                    <label for="cariMember" class="form-label fs-6 fw-bolder mb-3">Cari Member</label>
-                    <br>
-                    <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
+                <div class="fv-row my-4">
+                    <label for="jamPengambilan" class="form-label fs-6 fw-bolder mb-3">Jam Pengiriman</label>
+                    <input type="datetime-local" bind:value={jamPengambilan} class="form-control form-control-sm" required />
                 </div>
 
                 <div class="fv-row mb-2">
@@ -337,7 +287,7 @@
 
                 <div class="row mb-2">
                     <label for="eMoney" class="col-sm-4 col-form-label fw-bold fs-6">
-                        <span>Deposit Pesanan</span>
+                        <span>E-Money</span>
                     </label>
                     <div class="col-lg-8 fv-row">
                         <input type="text" class="form-control" placeholder="E-Money" on:keyup={calculatePaid} bind:value="{eMoney}" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
@@ -394,7 +344,7 @@
                         <span>Kembalian</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="text" class="form-control border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid - totalPrice ) }" />
+                        <input type="text" class="form-control border-0 bg-success fw-bolder text-white" readonly value="{ currencyFormat.format(totalPaid - totalPrice) }" />
                     </div>
                 </div>
 
