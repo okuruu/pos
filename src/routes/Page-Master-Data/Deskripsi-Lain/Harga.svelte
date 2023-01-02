@@ -36,7 +36,7 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-hover table-row-dashed table-row-gray-300 align-middle mt-2">
+    <table id="dataTable" class="table table-hover table-row-dashed table-row-gray-300 align-middle mt-2">
         <thead>
             <tr class="fw-bold">
                 <th>Kode Item</th>

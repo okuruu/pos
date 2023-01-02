@@ -15,7 +15,7 @@
         <div class="container-xxl d-flex align-items-center flex-lg-stack">
             <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-2 me-lg-5">
                 <div class="flex-grow-2 me-2">
-                    <img alt="Logo" src="/public/assets/images/logoDea.jpg" class="h-55px h-lg-55px rounded-corner-logo ">
+                    <img alt="Logo" src="assets/images/logoDea.jpg" class="h-55px h-lg-55px rounded-corner-logo ">
                 </div>
                 <div class="me-4">
                     <Link to="Master-Data" class="btn me-2 fw-bold">Master Data</Link>
@@ -29,7 +29,7 @@
             </div>
             <div class="d-flex align-items-stretch flex-shrink-0">
                 <div class="d-flex align-items-center ms-1 ms-lg-3">
-                    <img src="/public/assets/images/evilDuck.jpg" alt="Press evil duck to logout" class="h-55px h-lg-55px rounded-corner-logo"/>
+                    <img src="assets/images/evilDuck.jpg" alt="Press evil duck to logout" class="h-55px h-lg-55px rounded-corner-logo"/>
                 </div>
             </div>
         </div>
