@@ -1,5 +1,6 @@
 <script lang="ts">
     import ItemKeluar from "./Page-Persediaan/ItemKeluar.svelte";
+    import StokOpname from "./Page-Persediaan/StokOpname.svelte";
 
     let currentPage:string  = 'itemKeluar'
     let listPages:string[]  = ['✌️ Item Keluar','🤣 Stok Opname']
@@ -19,8 +20,8 @@
 
 <div class="container-fluid">
     {#if currentPage == '✌️ Item Keluar' }
-
         <ItemKeluar />
-
+    {:else if currentPage == '🤣 Stok Opname'}
+        <StokOpname />
     {/if}
 </div>
