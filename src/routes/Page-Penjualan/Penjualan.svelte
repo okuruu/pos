@@ -185,22 +185,22 @@
         </div>
         <div class="card-body">
             
-    <form on:submit|preventDefault={inputToList}>
-        <div class="row">
-            <label for="inputDataPenjualan" class="col-lg-4 col-form-label required fw-bold fs-6">Stok & Jumlah</label>
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-lg-6 fv-row">
-                        <AutoComplete items="{bundlePenjualan.STOK}" bind:this={productInput} bind:selectedItem="{currentItem}" placeholder="Nama Item" class="form-control form-control-lg mb-3 mb-lg-0" labelFieldName="NAMA" hideArrow="true" />
-                    </div>
-                    <div class="col-lg-6 fv-row">
-                        <input type="number" min="1" bind:value={currentQuantity} class="form-control form-control-lg" placeholder="Masukkan Jumlah"/>
+        <form on:submit|preventDefault={inputToList}>
+            <div class="row">
+                <label for="inputDataPenjualan" class="col-lg-4 col-form-label required fw-bold fs-6">Stok & Jumlah</label>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-6 fv-row">
+                            <AutoComplete items="{bundlePenjualan.STOK}" bind:this={productInput} bind:selectedItem="{currentItem}" placeholder="Nama Item" class="form-control form-control-lg mb-3 mb-lg-0" labelFieldName="NAMA" hideArrow="true" />
+                        </div>
+                        <div class="col-lg-6 fv-row">
+                            <input type="number" min="1" bind:value={currentQuantity} class="form-control form-control-lg" placeholder="Masukkan Jumlah"/>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <button type="submit" hidden class="btn btn-primary">Eastern Man</button>
-    </form>
+            <button type="submit" hidden class="btn btn-primary">Eastern Man</button>
+        </form>
 
         <div class="table-responsive mt-4">
             <table class="table table-row-dashed table-row-gray-300 align-middle mt-2">
