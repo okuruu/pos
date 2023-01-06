@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import toast, { Toaster } from 'svelte-french-toast';
     import { userResponse } from "../../lib/activeUser";
     import { globalURL } from "../../lib/mainLink";
 
@@ -14,8 +15,14 @@
         DATABASE    : null,
         FISIK       : null
     }
+    let tanggalPencatatan:any
+    let totalSelisih:number = 0
 
     onMount(async () => {
+        loadStocks()
+    })
+
+    async function loadStocks(){
         const getServer = await fetch(globalURL + 'Stok-Opname', {
             method : 'POST',
             headers : { 'Content-Type' : 'application/json' },
@@ -26,15 +33,15 @@
         })
 
         masterProduk            = await getServer.json()
-    })
+    }
 
     function changeData(){
 
         let findValue = masterProduk.find(e => e.KODE === currentProducts )
         findValue = findValue
 
+        // @ts-ignore
         itemPlaceholder = {
-            // @ts-ignore
             KODE        : findValue.KODE,
             NAMA        : findValue.NAMA,
             HARGA       : findValue.HARGA,
@@ -42,11 +49,41 @@
             DATABASE    : findValue.DATABASE,
             FISIK       : findValue.FISIK,
         }
+        totalSelisih = 0
+    }
 
-        console.log(itemPlaceholder)
+    function hitungSelisih(){
+        totalSelisih = itemPlaceholder.FISIK - itemPlaceholder.DATABASE
+    }
+
+    async function doPost() {
+        const postServer = await fetch(globalURL + 'Post-Stok-Opname', {
+            method : 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials : 'include',
+            body : JSON.stringify({
+                NIP                 : userResponse.nip ,
+                NAMA                : userResponse.name ,
+                OUTLET              : userResponse.outlet,
+                KODE                : itemPlaceholder.KODE,
+                STOK_REAL           : itemPlaceholder.DATABASE,
+                STOK_FISIK          : itemPlaceholder.FISIK,
+                SELISIH             : totalSelisih,
+                KATEGORI            : 'Non Retail',
+                TIPE                : 'Stok Opname',
+                TANGGAL             : tanggalPencatatan
+            })
+        })
+
+        const serverData = await postServer.json()
+
+        toast.success(serverData)
+        return loadStocks()
     }
 
 </script>
+
+<Toaster />
 
 <div class="row">
     <div class="col-sm-8 col-md-8 col-lg-8">
@@ -55,7 +92,7 @@
             <div class="card-header">
                 <h3 class="card-title fw-bold">Stok Opname</h3>
                 <div class="card-toolbar">
-                    <button type="button" class="btn btn-sm btn-primary">
+                    <button type="button" on:click={doPost} class="btn btn-sm btn-primary">
                         Simpan
                     </button>
                 </div>
@@ -67,7 +104,7 @@
                         <span>Pilih Tanggal</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="datetime-local" class="form-control" placeholder="Tanggal" required/>
+                        <input type="datetime-local" bind:value={tanggalPencatatan} class="form-control" placeholder="Tanggal" required/>
                     </div>
                 </div>
         
@@ -143,7 +180,7 @@
                         <span>Database</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="number" class="form-control" bind:value={itemPlaceholder.DATABASE} placeholder="-" min="0" max="99999" required/>
+                        <input type="number" class="form-control" on:keydown={hitungSelisih} bind:value={itemPlaceholder.DATABASE} placeholder="-" min="0" max="99999" required/>
                     </div>
                 </div>
 
@@ -152,7 +189,7 @@
                         <span>Stok Fisik</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="number" class="form-control" bind:value={itemPlaceholder.FISIK} placeholder="-" min="0" max="99999" required/>
+                        <input type="number" class="form-control" on:keydown={hitungSelisih} bind:value={itemPlaceholder.FISIK} placeholder="-" min="0" max="99999" required/>
                     </div>
                 </div>
 
@@ -163,7 +200,7 @@
                         <span>Selisih</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="number" class="form-control form-control-flush" placeholder="-" min="0" max="99999" required readonly/>
+                        <input type="number" class="form-control form-control-flush" placeholder="-" min="0" max="99999" bind:value={totalSelisih} required readonly/>
                     </div>
                 </div>
 
