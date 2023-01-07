@@ -73,7 +73,7 @@
     <div class="card-header">
         <h3 class="card-title fw-bold">Pendaftaran Member Dea Bakery</h3>
         <div class="card-toolbar me-2">
-            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#cekPoin">Cek Poin</button>
+            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#cekPoin"><i class="las la-coins fs-2 me-2"></i>Cek Poin</button>
         </div>
     </div>
     <div class="card-body">
@@ -184,7 +184,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Simpan Data</button>
+        <button type="submit" class="btn btn-sm btn-danger">Simpan</button>
     
     </form>
 
@@ -202,7 +202,7 @@
             <div class="modal-header">
                 <h3 class="modal-title">Lihat Poin Member</h3>
 
-                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2 fw-bolder" data-bs-dismiss="modal" aria-label="Close">X</div>
+                <div class="btn btn-icon btn-sm btn-active-light-danger ms-2 fw-bolder" data-bs-dismiss="modal" aria-label="Close">X</div>
             </div>
 
             <div class="modal-body">
@@ -238,7 +238,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="las la-times-circle fs-2"></i>Tutup</button>
             </div>
         </div>
     </div>

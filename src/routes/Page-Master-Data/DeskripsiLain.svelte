@@ -13,7 +13,7 @@
 
 <div class="card shadow-sm">
     <div class="card-header">
-        <h3 class="card-title">Deskripsi Lain</h3>
+        <h3 class="card-title fw-bold">Deskripsi Lain</h3>
         <div class="card-toolbar">
             <select bind:value={currentPage} on:change={changePage} class="form-select form-select-sm">
                 {#each choosePage as data }

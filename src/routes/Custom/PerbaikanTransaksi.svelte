@@ -5,15 +5,26 @@
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
 
-    let currentDate:string      = 'Fetching..'
+    let currentDate:string          = 'Fetching..'
     let transaksiLama
-    let dataRekap               = []
-    let dataDetail              = []
-    let totalTransaksi:number   = 0
-    let totalBayar:number       = 0
-    let totalKembalian:number   = 0
+    let dataRekap                   = []
+    let dataDetail                  = []
+    let noTransaksiDetail:string    = 'Memuat..'
+    let totalTransaksi:number       = 0
+    let totalBayar:number           = 0
+    let totalKembalian:number       = 0
+
+    // Perbaikan Transaksi
+    let tipeKesalahan:string
+    let kategoriKesalahan:string
+    let treatmentDilakukan:string
+    let additionalInformation:string
 
     onMount( async () => {
+        fetchCustomData()
+    })
+
+    async function fetchCustomData(){
         const serverData = await fetch( globalURL + 'Data-Rekap', {
             method: 'POST',
             credentials: 'include',
@@ -25,7 +36,7 @@
         totalTransaksi          = serverResponse.totalTransaksi
         totalBayar              = serverResponse.totalBayar
         totalKembalian          = serverResponse.totalKembalian
-    })
+    }
 
     async function checkDetail(KODE){
 
@@ -38,7 +49,9 @@
             })
         })
 
-        dataDetail              = await getDetail.json()
+        const detailResponse    = await getDetail.json()
+        dataDetail              = detailResponse.DETAIL
+        noTransaksiDetail       = detailResponse.KODE
         return dataDetail
     }
 
@@ -114,7 +127,7 @@
                         </tr>
                     {/each}
                         <tr>
-                            <td class="fw-bolder"  colspan="4">Total</td>
+                            <td class="fw-bolder" colspan="5">Total</td>
                             <td class="fw-bolder" >{ currencyFormat.format(totalTransaksi) }</td>
                             <td class="fw-bolder" >{ currencyFormat.format(totalBayar) }</td>
                             <td class="fw-bolder" >{ currencyFormat.format(totalKembalian) }</td>
@@ -132,7 +145,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Modal title</h3>
+                <h3 class="modal-title">{ noTransaksiDetail }</h3>
 
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
@@ -173,37 +186,22 @@
                 <div class="separator separator-content border-dark my-15"><span class="w-250px fw-bold">Form Perbaikan Transaksi</span></div>
 
                 <div class="row">
-                    <div class="col-md-6 fv-row">
-                        <label for="jenisPerbaikan" class="mb-2">
-                            <span class="text-gray-700 fs-6 fw-bolder">Jenis Perbaikan</span>
-                        </label>
-                        <select class="form-select form-select-sm" required>
-                            <option value="">Pilih Jenis Perbaikan</option>
-                            <option value="Persediaan">Persediaan</option>
-                            <option value="Penjualan">Penjualan</option>
-                            <option value="Keuangan">Keuangan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 fv-row">
+                    <div class="col-md-4 fv-row">
                         <label for="kesalahanLuarOutlet" class="d-flex align-items-center mb-2">
-                        <span class="text-gray-700 fs-6 fw-bolder required">Kesalahan Di Luar Outlet</span>
-                            <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Kesalahan yang terjadi bukan karena pihak outlet"></i>
+                            <span class="text-gray-700 fs-6 fw-bolder required">Kesalahan Di Luar Outlet</span>
                         </label>
-                        <select class="form-select form-select-sm">
+                        <select bind:value={tipeKesalahan} class="form-select form-select-sm">
                             <option value="">Pilih Jenis Kesalahan</option>
                             <option value="Surat Jalan Outlet Lain">Karena kesalahan surat jalan outlet lain</option>
                             <option value="Permintaan Customer">Karena permintaan customer</option>
                             <option value="Permintaan CS">Karena permintaan CS</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="row mt-5">
-                    <div class="col-md-6 fv-row">
+                    <div class="col-md-4 fv-row">
                         <label for="kategoriKesalahan" class="mb-2">
                             <span class="text-gray-700 fs-6 fw-bolder">Kategori Kesalahan</span>
                         </label>
-                        <select class="form-select form-select-sm">
+                        <select bind:value={kategoriKesalahan} class="form-select form-select-sm">
                             <option value="">Pilih Kategori Kesalahan</option>
                             <option value="Data Input Item Masuk / Daftar Pembelian">Data Input Item Masuk / Daftar Pembelian</option>
                             <option value="Data Input Item Keluar">Data Input Item Keluar</option>
@@ -220,11 +218,11 @@
                             <option value="Input Pelanggan">Input Pelanggan</option>
                         </select>
                     </div>
-                    <div class="col-md-6 fv-row">
+                    <div class="col-md-4 fv-row">
                         <label for="treatmentDilakukan" class="mb-2">
                             <span class="text-gray-700 fs-6 fw-bolder">Treatment Dilakukan</span>
                         </label>
-                        <select class="form-select form-select-sm">
+                        <select bind:value={treatmentDilakukan} class="form-select form-select-sm">
                             <option value="">Pilih Jenis Treatment</option>
                             <option value="Belum Ada">Belum Ada</option>
                             <option value="Saya Telah Membuat Stok Miss / Selisih Kas Keluar atau Kas Masuk/ Transaksi Baru">Saya Telah Membuat Stok Miss / Selisih Kas Keluar atau Kas Masuk/ Transaksi Baru</option>
@@ -238,15 +236,15 @@
                         <span class="text-gray-700 fs-6 fw-bolder required">Deskripsi Perbaikan</span>
                     </label>
                     <div class="fv-row">
-                        <textarea class="form-control mb-3" rows="6" placeholder="Jelaskan perbaikan yang anda inginkan" ></textarea>
+                        <textarea bind:value={additionalInformation} class="form-control mb-3" rows="6" placeholder="Jelaskan perbaikan yang anda inginkan" ></textarea>
                     </div>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary">Ajukan Perbaikan</button>
             </div>
         </div>
     </div>

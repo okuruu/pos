@@ -27,7 +27,7 @@
 
 <div class="card shadow-sm">
     <div class="card-header">
-        <h3 class="card-title">Daftar Item</h3>
+        <h3 class="card-title fw-bold">Daftar Item</h3>
         <div class="card-toolbar">
             <button type="button" class="btn btn-sm btn-primary">
                 Active Session: {activeSession}
@@ -36,7 +36,7 @@
     </div>
     <div class="card-body">
         
-        <table class="table align-middle text-center">
+        <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover text-center">
             <thead>
                 <tr class="fw-bold">
                     <th>#</th>
@@ -61,8 +61,5 @@
             </tbody>
         </table>
 
-    </div>
-    <div class="card-footer">
-        Footer
     </div>
 </div>

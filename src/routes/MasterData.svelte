@@ -17,9 +17,6 @@
         <div class="col-sm-2 col-md-2 col-lg-2">
             
             <div class="card shadow-sm">
-                <div class="card-header">
-                    <h3 class="card-title fw-bold">Master Data</h3>
-                </div>
                 <div class="card-body">
                     
                     <button type="button" on:click={ () => { currentPage = 'daftarItem' } } class="btn btn-sm w-100 mb-1">Daftar Item</button>

@@ -138,7 +138,7 @@
                 <h3 class="card-title fw-bold">Item Keluar</h3>
                 <div class="card-toolbar">
                     <div class="me-2">
-                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pilihPIC">Munculkan PIC</button>
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pilihPIC"><i class="las la-user-tag fs-2 me-2"></i>Munculkan PIC</button>
                     </div>
                 </div>
             </div>
@@ -225,7 +225,7 @@
                     <textarea class="form-control" bind:value={additionalInformation} rows="3" placeholder="Keterangan Untuk Transaksi Ini"></textarea>
                 </div>
 
-                <button type="button" on:click={doPost}  class="form-control bg-primary text-white my-3">Simpan</button>
+                <button type="button" on:click={doPost}  class="btn btn-icon btn-primary w-100">Simpan</button>
 
             </div>
         </div>
@@ -276,14 +276,14 @@
                 </div>
 
                 <div class="me-2">
-                    <button type="button" on:click={tambahkanPenanggungJawab} class="btn btn-sm btn-warning">Tambahkan</button>
-                    <button type="button" on:click={hapusPenanggungJawab} class="btn btn-sm btn-danger">Hapus</button>
+                    <button type="button" on:click={tambahkanPenanggungJawab} class="btn btn-sm btn-warning my-2"><i class="las la-plus-circle fs-2 me-2"></i>Tambahkan</button>
+                    <button type="button" on:click={hapusPenanggungJawab} class="btn btn-sm btn-danger my-2"><i class="las la-user-slash fs-2 me-2"></i>Hapus Semua</button>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="las la-times-circle fs-2 me-2"></i>Tutup</button>
             </div>
         </div>
     </div>

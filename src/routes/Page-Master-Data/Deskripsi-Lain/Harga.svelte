@@ -28,10 +28,10 @@
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <input type="text" bind:value={searchItem} class="form-control form-control-sm" placeholder="Cari Produk" />
+        <input type="text" bind:value={searchItem} class="form-control" placeholder="Cari Produk" />
     </div>
     <div class="col-sm-2 col-md-2 col-lg-2">
-        <button type="submit" class="btn btn-sm btn-primary">Cari</button>
+        <button type="submit" class="btn btn-icon btn-primary"><i class="las la-search fs-2"></i></button>
     </div>
 </div>
 

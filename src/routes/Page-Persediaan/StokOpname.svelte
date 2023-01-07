@@ -92,9 +92,7 @@
             <div class="card-header">
                 <h3 class="card-title fw-bold">Stok Opname</h3>
                 <div class="card-toolbar">
-                    <button type="button" on:click={doPost} class="btn btn-sm btn-primary">
-                        Simpan
-                    </button>
+                    <button type="button" on:click={doPost} class="btn btn-sm btn-primary">Simpan</button>
                 </div>
             </div>
             <div class="card-body">
@@ -180,7 +178,7 @@
                         <span>Database</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="number" class="form-control" on:keydown={hitungSelisih} bind:value={itemPlaceholder.DATABASE} placeholder="-" min="0" max="99999" required/>
+                        <input type="number" class="form-control" on:keydown={hitungSelisih} bind:value={itemPlaceholder.DATABASE} placeholder="Pilih item terlebih dahulu" min="0" max="99999" readonly required/>
                     </div>
                 </div>
 
