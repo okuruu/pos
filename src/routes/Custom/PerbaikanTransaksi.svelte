@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import toast from "svelte-french-toast";
+    import toast, { Toaster } from 'svelte-french-toast';
     import { userResponse } from "../../lib/activeUser";
     import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
+
+    let uniqueCode:string
 
     let currentDate:string          = 'Fetching..'
     let transaksiLama
@@ -30,7 +32,6 @@
             credentials: 'include',
         })
         const serverResponse    = await serverData.json()
-
         currentDate             = serverResponse.tanggal
         dataRekap               = serverResponse.data
         totalTransaksi          = serverResponse.totalTransaksi
@@ -52,6 +53,7 @@
         const detailResponse    = await getDetail.json()
         dataDetail              = detailResponse.DETAIL
         noTransaksiDetail       = detailResponse.KODE
+        uniqueCode              = detailResponse.UNIQUE
         return dataDetail
     }
 
@@ -77,7 +79,31 @@
         return toast.success("Berhasil mendapatkan data!")
     }
 
+    async function doPost(){
+        const willPost      = await fetch(globalURL + 'Post-Perbaikan-Transaksi', {
+            method : 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials : 'include',
+            body: JSON.stringify({
+                NIP                 : userResponse.nip ,
+                NAMA                : userResponse.name ,
+                OUTLET              : userResponse.outlet ,
+                KODE                : uniqueCode,
+                TIPE_KESALAHAN      : tipeKesalahan,
+                KATEGORI_KESALAHAN  : kategoriKesalahan,
+                TREATMENT_DILAKUKAN : treatmentDilakukan,
+                KETERANGAN          : additionalInformation
+            })
+        })
+        const postResponse  = await willPost.json()
+
+        toast.success(postResponse)
+
+    }
+
 </script>
+
+<Toaster />
 
 <div class="card shadow-sm my-7">
     <div class="card-header">
@@ -118,7 +144,17 @@
                             <td>{ index + 1 }</td>
                             <td>{ data.CREATED_AT } WIB</td>
                             <td>{ data.NAMA }</td>
-                            <td>{ data.NOMOR_TRANSAKSI }</td>
+                            <td>
+                                {#if data.STATUS_PERBAIKAN == 'Pending' || data.STATUS_PERBAIKAN == 'Hold'}
+                                    <span class="badge badge-warning">{ data.NOMOR_TRANSAKSI }</span>
+                                {:else if data.STATUS_PERBAIKAN == 'On Going' }
+                                    <span class="badge badge-primary">{ data.NOMOR_TRANSAKSI }</span>
+                                {:else if data.STATUS_PERBAIKAN == null }
+                                    { data.NOMOR_TRANSAKSI }
+                                {:else}
+                                    <span class="badge badge-success">{ data.NOMOR_TRANSAKSI }</span>
+                                {/if}
+                            </td>
                             <td>{ data.KATEGORI }</td>
                             <td>{ currencyFormat.format(data.TOTAL_TRANSAKSI) }</td>
                             <td>{ currencyFormat.format(data.TOTAL_BAYAR) }</td>
@@ -146,12 +182,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">{ noTransaksiDetail }</h3>
-
-                <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="svg-icon svg-icon-1"></span>
                 </div>
-                <!--end::Close-->
             </div>
 
             <div class="modal-body">
@@ -192,9 +225,9 @@
                         </label>
                         <select bind:value={tipeKesalahan} class="form-select form-select-sm">
                             <option value="">Pilih Jenis Kesalahan</option>
-                            <option value="Surat Jalan Outlet Lain">Karena kesalahan surat jalan outlet lain</option>
-                            <option value="Permintaan Customer">Karena permintaan customer</option>
-                            <option value="Permintaan CS">Karena permintaan CS</option>
+                            <option value="Surat Jalan Outlet Lain">Karena Kesalahan Surat Jalan Outlet Lain</option>
+                            <option value="Permintaan Customer">Karena Permintaan Customer</option>
+                            <option value="Permintaan CS">Karena Permintaan CS</option>
                         </select>
                     </div>
                     <div class="col-md-4 fv-row">
@@ -244,7 +277,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary">Ajukan Perbaikan</button>
+                <button type="button" on:click={doPost} class="btn btn-primary">Ajukan Perbaikan</button>
             </div>
         </div>
     </div>
