@@ -11,7 +11,7 @@ export async function activeUsers(){
         return await fetchUsers.json()
 
     } catch (error) {
-        console.log(error.message)
+        // 
     }
 
 

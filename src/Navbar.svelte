@@ -10,16 +10,16 @@
     import { globalURL } from './lib/mainLink';
 
     async function logOut(){
-        const loggingOut = await fetch(globalURL + 'Keluar', {
+        await fetch(globalURL + 'Keluar', {
             method : 'POST',
-            headers : { 'Content-Type' : 'applciation/json' },
+            headers : { 'Content-Type' : 'application/json' },
             credentials : 'include',
             body : JSON.stringify({
                 TOKEN : 'jwt'
             })
         })
         
-        window.location.reload()
+        window.location = 'http://localhost:5173'
     }
 
 </script>

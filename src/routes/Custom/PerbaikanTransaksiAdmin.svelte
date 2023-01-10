@@ -9,6 +9,7 @@
     let data:string[] = []
     let dataDetail                  = []
     let noTransaksiDetail:string    = 'Memuat..'
+    let requestPerbaikan:string[]   = []
 
     // Perbaikan Transaksi
     let tipeKesalahan:string
@@ -42,6 +43,9 @@
         kategoriKesalahan       = detailResponse.PERBAIKAN.KATEGORI
         treatmentDilakukan      = detailResponse.PERBAIKAN.TREATMENT
         additionalInformation   = detailResponse.PERBAIKAN.KETERANGAN
+        requestPerbaikan        = detailResponse.REQUEST
+
+        console.log(requestPerbaikan)
 
         return dataDetail
     }
@@ -61,6 +65,7 @@
         </div>
     </div>
     <div class="card-body">
+
         
         <div class="table-responsive">
             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center">
@@ -124,32 +129,72 @@
             </div>
 
             <div class="modal-body">
-                
-                <div class="table-responsive">
-                    <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center">
-                        <thead>
-                            <tr class="fw-bold">
-                                <th>Kode Item</th>
-                                <th>Nama</th>
-                                <th>Satuan</th>
-                                <th>Harga</th>
-                                <th>Jumlah</th>
-                                <th>Total Harga</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each dataDetail as data }
-                                <tr>
-                                    <td>{ data.KODE_ITEM }</td>
-                                    <td>{ data.NAMA_ITEM }</td>
-                                    <td>{ data.SATUAN }</td>
-                                    <td>{ currencyFormat.format(data.HARGA) }</td>
-                                    <td>{ data.JUMLAH }</td>
-                                    <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
-                                </tr>                                
-                            {/each}
-                        </tbody>
-                    </table>
+
+                <div class="row">
+                    <div class="col">
+
+                        <div class="separator separator-content border-dark my-5"><span class="w-250px fw-bold">Perbaikan Original</span></div>
+
+                        <div class="table-responsive">
+                            <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
+                                <thead>
+                                    <tr class="fw-bold bg-opacity-75 bg-primary text-white">
+                                        <th>Kode Item</th>
+                                        <th>Nama</th>
+                                        <th>Satuan</th>
+                                        <th>Harga</th>
+                                        <th>Jumlah</th>
+                                        <th>Total Harga</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-opacity-5 bg-primary">
+                                    {#each dataDetail as data }
+                                        <tr>
+                                            <td>{ data.KODE_ITEM }</td>
+                                            <td>{ data.NAMA_ITEM }</td>
+                                            <td>{ data.SATUAN }</td>
+                                            <td>{ currencyFormat.format(data.HARGA) }</td>
+                                            <td>{ data.JUMLAH }</td>
+                                            <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
+                                        </tr>                                
+                                    {/each}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="col">
+
+                        <div class="separator separator-content border-dark my-5"><span class="w-250px fw-bold">Permintaan Perbaikan</span></div>
+
+                        <div class="table-responsive">
+                            <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
+                                <thead>
+                                    <tr class="fw-bold bg-opacity-75 bg-info text-white">
+                                        <th>Kode Item</th>
+                                        <th>Nama</th>
+                                        <th>Satuan</th>
+                                        <th>Harga</th>
+                                        <th>Jumlah</th>
+                                        <th>Total Harga</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-opacity-5 bg-info">
+                                    {#each requestPerbaikan as dataRequest }
+                                        <tr>
+                                            <td>{ dataRequest.KODE_ITEM }</td>
+                                            <td>{ dataRequest.NAMA_ITEM }</td>
+                                            <td>{ dataRequest.SATUAN }</td>
+                                            <td>{ currencyFormat.format(dataRequest.HARGA) }</td>
+                                            <td>{ dataRequest.JUMLAH }</td>
+                                            <td>{ currencyFormat.format(dataRequest.TOTAL_HARGA) }</td>
+                                        </tr>                                
+                                    {/each}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div class="separator separator-content border-dark my-15"><span class="w-350px fw-bold">{personInCharge}</span></div>
