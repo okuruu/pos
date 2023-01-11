@@ -133,7 +133,7 @@
                 <div class="row">
                     <div class="col">
 
-                        <div class="separator separator-content border-dark my-5"><span class="w-250px fw-bold">Perbaikan Original</span></div>
+                        <div class="separator separator-content border-dark my-5"><span class="w-250px fw-bold">Detail Transaksi</span></div>
 
                         <div class="table-responsive">
                             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
@@ -181,7 +181,7 @@
                                 </thead>
                                 <tbody class="bg-opacity-5 bg-info">
                                     {#each requestPerbaikan as dataRequest }
-                                        <tr>
+                                        <tr class:strikethrough="{ dataRequest.DIHAPUS === true }" >
                                             <td>{ dataRequest.KODE_ITEM }</td>
                                             <td>{ dataRequest.NAMA_ITEM }</td>
                                             <td>{ dataRequest.SATUAN }</td>
@@ -238,3 +238,10 @@
         </div>
     </div>
 </div>
+
+<style>
+    .strikethrough {
+        text-decoration: line-through;
+        color: red;
+    }
+</style>
