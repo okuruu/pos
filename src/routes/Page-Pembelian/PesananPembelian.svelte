@@ -157,7 +157,7 @@
 
         <div class="card shadow-sm mb-7">
             <div class="card-header">
-                <h3 class="card-title">Pesanan Pembelian</h3>
+                <h3 class="card-title fw-bold">Pesanan Pembelian</h3>
             </div>
             <div class="card-body">
                 

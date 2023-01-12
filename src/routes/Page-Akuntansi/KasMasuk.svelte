@@ -105,12 +105,12 @@
             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
                 <thead>
                     <tr class="fw-bold">
-                        <th>Kode Item</th>
-                        <th>Nama</th>
-                        <th>Satuan</th>
-                        <th>Harga</th>
-                        <th>Jumlah</th>
-                        <th>Total Harga</th>
+                        <th>No Transaksi</th>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th>Kode Akun</th>
+                        <th>Nama Akun</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>

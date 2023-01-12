@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@canutin/svelte-currency-input": "^0.7.2",
+    "@lottiefiles/svelte-lottie-player": "^0.3.0",
     "simple-svelte-autocomplete": "^2.5.1",
     "svelte-french-toast": "^1.0.3",
     "svelte-navigator": "^3.2.2"
