@@ -280,7 +280,7 @@
                         <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
                     </div>
 
-                    <button type="button" class="form-control text-white bg-primary mt-12" data-bs-toggle="modal" data-bs-target="#bayarPenjualan">Bayar</button>
+                    <button type="button" class="btn btn-primary w-100 mt-12" data-bs-toggle="modal" data-bs-target="#bayarPenjualan"><i class="las la-wallet fs-2 me-2"></i>Pembayaran</button>
         
                 </div>
             </div>
@@ -392,7 +392,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" on:click={doPost} >Simpan</button>
+                <button type="button" class="btn btn-primary" on:click={doPost} ><i class="las la-receipt fs-2 me-2"></i>Simpan Transaksi</button>
             </div>
         </div>
     </div>

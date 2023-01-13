@@ -186,7 +186,7 @@
                         <input type="date" bind:value={transaksiLama} required class="form-control form-control-sm" />
                     </div>
                     <div class="col">
-                        <button type="submit" class="btn btn-sm btn-success">Lihat Transaksi</button>
+                        <button type="submit" class="btn btn-sm btn-success"><i class="las la-search fs-2 me-2"></i>Lihat</button>
                     </div>
                 </div>
             </form>

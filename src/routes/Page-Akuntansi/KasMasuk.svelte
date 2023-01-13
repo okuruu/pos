@@ -1,30 +1,96 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+    import { globalURL } from "../../lib/mainLink";
+    import { userResponse } from "../../lib/activeUser";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
+
+    let mainTable               = []
+
+    let listAkun:string[]       = []
+    let listNominal:number
+    let currentKode:string
+    let currentNominal          = 0
+    let tanggalKasMasuk
+
+    let masukKeAkun = []
+    let ketKeAkun   = []
+
+    onMount(async () => {
+        const getData = await fetch(globalURL + 'Saldo', {
+            method : 'GET',
+            credentials: 'include'
+        })
+
+        const getResponse = await getData.json()
+
+        mainTable   = getResponse.DETAIL
+        listAkun    = getResponse.OPSI
+
+        listAkun.forEach(data => {
+            masukKeAkun.push(data.KODE)
+            ketKeAkun.push(data.KETERANGAN)
+        });
+
+        masukKeAkun = masukKeAkun
+        ketKeAkun   = ketKeAkun
+
+    })
+
     function runRepeater(){
 
-        let kodeNama    = ['Kode Akun','Keterangan','Nominal']
-        let inputNama   = ['KODE[]','KETERANGAN[]','NOMINAL[]']
         var container   = document.getElementById('itemPlaceholder')
 
-        for(let i = 0 ; i < kodeNama.length ; i++){
-            var div         = document.createElement('div')
-            div.setAttribute('class','col-md-4')
+        // Kode
+        var div         = document.createElement('div')
+        div.setAttribute('class','col-md-4')
 
-            var inputData = document.createElement('input')
-            inputData.setAttribute('class','form-control form-control-sm mb-3')
-            inputData.setAttribute('placeholder',kodeNama[i])
-            inputData.setAttribute('name',inputNama[i])
-
-            if(kodeNama[i] == 'Nominal'){
-                inputData.setAttribute('inputMode','decimal')
-                inputData.setAttribute('onFocus',"this.type='number'; this.value=this.lastValue")
-                inputData.setAttribute('onBlur',"this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()")
-            }
-
-            div.appendChild(inputData)
-            container.appendChild(div)
-
+        var selectData = document.createElement('select')
+        selectData.setAttribute('name','KODE[]')
+        selectData.setAttribute('class','form-select form-select-sm')
+        
+        for(let optionContent = 0; optionContent < masukKeAkun.length; optionContent++ ){
+            var option = document.createElement('option')
+            option.value    = masukKeAkun[optionContent]
+            option.text     = ketKeAkun[optionContent]
+            selectData.appendChild(option)
         }
+        
+        div.appendChild(selectData)
+        container.appendChild(div)
+   
+        // Keterangan
+        var div         = document.createElement('div')
+        div.setAttribute('class','col-md-4')
+        
+        var inputKeterangan = document.createElement('input')
+        inputKeterangan.setAttribute('class','form-control form-control-sm mb-3')
+        inputKeterangan.setAttribute('placeholder','Keterangan')
+        inputKeterangan.setAttribute('name','KETERANGAN[]')
+        
+        div.appendChild(inputKeterangan)
+        container.appendChild(div)
+        
+        // Nominal
+        var div         = document.createElement('div')
+        div.setAttribute('class','col-md-4')
 
+        var inputNominal = document.createElement('input')
+        inputNominal.setAttribute('inputMode','decimal')
+        inputNominal.setAttribute('name','NOMINAL[]')
+        inputNominal.setAttribute('class','form-control form-control-sm mb-3')
+        inputNominal.setAttribute('onFocus',"this.type='number'; this.value=this.lastValue")
+        inputNominal.setAttribute('onBlur',"this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()")
+        
+        div.appendChild(inputNominal)
+        container.appendChild(div)
+
+    }
+
+    function changeAkun(){
+        let findValue   = listAkun.find( e => e.KODE === listNominal )
+        currentNominal  = findValue.NOMINAL
+        currentKode     = findValue.KODE
     }
 
     async function doPost() {
@@ -53,15 +119,29 @@
 
         }
 
-        console.log({
-            KODE        : listKode,
-            KETERANGAN  : listKeterangan,
-            NOMINAL     : listNominal
+        const postServer = await fetch(globalURL + 'Saldo', {
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials : 'include',
+            body: JSON.stringify({
+                NIP                 : userResponse.nip ,
+                NAMA                : userResponse.name ,
+                OUTLET              : userResponse.outlet ,
+                MASUK_AKUN          : currentKode,
+                TANGGAL             : tanggalKasMasuk,
+                INPUT_KODE          : listKode,
+                INPUT_NOMINAL       : listNominal,
+                INPUT_KETERANGAN    : listKeterangan,
+            })
         })
+
+        toast.success("Berhasil menyimpan data")
 
     }
 
 </script>
+
+<Toaster />
 
 <div class="card card-flush shadow-sm mb-7">
     <div class="card-header">
@@ -107,21 +187,23 @@
                     <tr class="fw-bold">
                         <th>No Transaksi</th>
                         <th>Tanggal</th>
-                        <th>Keterangan</th>
+                        <th>Diupdate Oleh</th>
                         <th>Kode Akun</th>
                         <th>Nama Akun</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {#each mainTable as data }
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{ data.ID }</td>
+                            <td>{ data.CREATED_AT }</td>
+                            <td>{ data.LAST_RESPONSIBLE }</td>
+                            <td>-</td>
+                            <td>{ data.KETERANGAN }</td>
+                            <td>{ currencyFormat.format(data.NOMINAL) }</td>
                         </tr>                                
+                    {/each}
                 </tbody>
             </table>
         </div>
@@ -154,11 +236,21 @@
                         <span>Masuk ke Akun</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <select class="form-select form-select-sm">
+                        <select bind:value={listNominal} on:change={changeAkun} class="form-select form-select-sm">
                             <option value="">Pilih Akun</option>
-                            <option value="Kas Kecil">Kas Kecil</option>
-                            <option value="Kas Manajemen">Kas Manajemen</option>
+                            {#each listAkun as akun}
+                                <option value="{akun.KODE}">{ akun.KETERANGAN }</option>
+                            {/each}
                         </select>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <label for="setTanggal" class="col-sm-4 col-form-label fw-bold fs-6 ">
+                        <span></span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <input type="text" class="form-control form-control-sm form-control-flush" placeholder="Rp. 0" readonly value={ currencyFormat.format(currentNominal) } />
                     </div>
                 </div>
 
@@ -167,7 +259,7 @@
                         <span>Atur Tanggal</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="date" class="form-control form-control-sm" />
+                        <input type="date" class="form-control form-control-sm" bind:value={tanggalKasMasuk} />
                     </div>
                 </div>
 

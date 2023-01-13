@@ -92,7 +92,7 @@
             <div class="card-header">
                 <h3 class="card-title fw-bold">Stok Opname</h3>
                 <div class="card-toolbar">
-                    <button type="button" on:click={doPost} class="btn btn-sm btn-primary">Simpan</button>
+                    <button type="button" on:click={doPost} class="btn btn-sm btn-primary"><i class="las la-receipt fs-2 me-2"></i>Simpan Transaksi</button>
                 </div>
             </div>
             <div class="card-body">

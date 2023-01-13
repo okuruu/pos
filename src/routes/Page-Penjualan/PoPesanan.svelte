@@ -62,10 +62,17 @@
     })
 
     function changeCurrentOrder(){
+
+        // Reset to empty
+        cartData    = []
+        totalPrice  = 0
+        uniqueID    = null
+
         selectingOrders = true
         cartData        = availableOrders[indexAvailableOrders].DETAIL
         totalPrice      = availableOrders[indexAvailableOrders].HARGA
         uniqueID        = availableOrders[indexAvailableOrders].UNIQUE
+
     }
 
     function recalculatePrice(cartData){
@@ -128,7 +135,6 @@
         cartData = cartData
         recalculatePrice(cartData)
     }
-
 
     async function showMember(keywords){
         const memberGet = await fetch(globalURL + 'Search-Member/' + encodeURIComponent(keywords) , {
@@ -238,11 +244,6 @@
             <div class="card shadow-sm my-6">
                 <div class="card-header">
                     <h3 class="card-title">Penjualan Kasir</h3>
-                    <div class="card-toolbar">
-                        <button type="button" on:click={doPost} class="btn btn-sm btn-success">
-                            Simpan Transaksi
-                        </button>
-                    </div>
                 </div>
                 <div class="card-body">
                     
@@ -335,7 +336,7 @@
                         <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
                     </div>
 
-                    <button type="button" class="form-control text-white bg-primary mt-12" data-bs-toggle="modal" data-bs-target="#checkoutPesanan">Bayar</button>
+                    <button type="button" class="btn btn-primary w-100 mt-12" data-bs-toggle="modal" data-bs-target="#checkoutPesanan"><i class="las la-wallet fs-2 me-2"></i>Pembayaran</button>
         
                 </div>
             </div>
@@ -446,7 +447,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" on:click={doPost} class="btn btn-primary">Simpan Transaksi</button>
+                <button type="button" on:click={doPost} class="btn btn-primary"><i class="las la-receipt fs-2 me-2"></i>Simpan Transaksi</button>
             </div>
         </div>
     </div>

@@ -208,9 +208,7 @@
             <div class="card-header">
                 <h3 class="card-title fw-bold">Detail</h3>
                 <div class="card-toolbar">
-                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#bayarPesanan">
-                        Bayaren
-                    </button>
+                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#bayarPesanan"><i class="las la-wallet fs-2 me-2"></i>Pembayaran</button>
                 </div>
             </div>
             <div class="card-body">
@@ -244,6 +242,8 @@
                     <label for="keteranganTambahan" class="form-label fs-6 fw-bolder mb-3">Keterangan Tambahan</label>
                     <textarea class="form-control " rows="3" placeholder="Keterangan Untuk Transaksi Ini" bind:value={additionalInformation}></textarea>
                 </div>
+
+                <button type="button" class="btn w-100 btn-success mt-7" data-bs-toggle="modal" data-bs-target="#bayarPesanan"><i class="las la-wallet fs-2 me-2"></i>Pembayaran</button>
 
             </div>
         </div>
@@ -350,8 +350,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" on:click={simpanTransaksi} class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="las la-times-circle fs-2 me-2"></i>Tutup</button>
+                <button type="button" on:click={simpanTransaksi} class="btn btn-primary"><i class="las la-receipt fs-2 me-2"></i>Simpan Transaksi</button>
             </div>
         </div>
     </div>
