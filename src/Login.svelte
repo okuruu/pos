@@ -1,7 +1,8 @@
 <script lang="ts">
 
-  import toast, { Toaster } from 'svelte-french-toast';
   import Navbar from "./Navbar.svelte";
+  import { globalURL } from './lib/mainLink';
+  import toast, { Toaster } from 'svelte-french-toast';
 
   let credentials: { email:string, password:string } = {
     email: null,
@@ -11,14 +12,14 @@
   let isAuthorized:boolean = false;
 
   async function checkInput(){
-    
+
     if(credentials.email == null || credentials.email == undefined || credentials.password == undefined || credentials.password == undefined ){
       return toast.error("Lengkapi data terlebih dahulu!",{
         position: 'bottom-center'
       })
     }
 
-    const loginAttempt = await fetch('http://localhost:8080/api/v1/Log-In', {
+    const loginAttempt = await fetch( globalURL + 'Log-In', {
       method        : 'POST',
       headers : {
         'Content-Type' : 'application/json',

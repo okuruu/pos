@@ -1,10 +1,10 @@
 <script lang="ts">
-    import AutoComplete from "simple-svelte-autocomplete"
     import { onMount } from "svelte";
-    import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
     import { userResponse } from "../../lib/activeUser";
-    import toast from "svelte-french-toast";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import AutoComplete from "simple-svelte-autocomplete"
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
     let cartData                = []
     let totalPrice:number       = 0
@@ -123,9 +123,9 @@
             headers : { 'Content-Type' : 'application/json' },
             credentials : 'include',
             body : JSON.stringify({
-                NIP         : userResponse.nip ,
-                NAMA        : userResponse.name ,
-                OUTLET      : userResponse.outlet ,
+                NIP         : userResponse.nip,
+                NAMA        : userResponse.name,
+                OUTLET      : userResponse.outlet,
                 SUPPLIER    : selectedSupplier,
                 KETERANGAN  : additionalInformation ,
                 PEMBAYARAN  : {
@@ -151,6 +151,8 @@
     }
 
 </script>
+
+<Toaster />
 
 <div class="row">
     <div class="col-sm-8 col-md-8 col-lg-8">

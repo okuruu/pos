@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { Router, Link, Route } from 'svelte-navigator'
+    import Custom from './routes/Custom.svelte';
+    import Laporan from './routes/Laporan.svelte';
     import Akuntansi from './routes/Akuntansi.svelte';
-    import MasterData from './routes/MasterData.svelte';
     import Pembelian from './routes/Pembelian.svelte';
     import Penjualan from './routes/Penjualan.svelte';
+    import MasterData from './routes/MasterData.svelte';
     import Persediaan from './routes/Persediaan.svelte';
-    import Laporan from './routes/Laporan.svelte';
-    import Custom from './routes/Custom.svelte';
-    import { globalURL } from './lib/mainLink';
+    import { globalURL, mainURL } from './lib/mainLink';
+    import { Router, Link, Route } from 'svelte-navigator'
 
     async function logOut(){
         await fetch(globalURL + 'Keluar', {
@@ -19,7 +19,7 @@
             })
         })
         
-        window.location = 'http://localhost:5173'
+        window.location.href = mainURL
     }
 
 </script>
@@ -44,7 +44,7 @@
             </div>
             <div class="d-flex align-items-stretch flex-shrink-0">
                 <div class="d-flex align-items-center ms-1 ms-lg-3">
-                    <img on:click={logOut} src="assets/images/evilDuck.jpg" alt="Press evil duck to logout" class="h-55px h-lg-55px rounded-corner-logo"/>
+                    <img on:click={logOut} on:keypress={logOut} src="assets/images/evilDuck.jpg" alt="Press evil duck to logout" class="h-55px h-lg-55px rounded-corner-logo"/>
                 </div>
             </div>
         </div>

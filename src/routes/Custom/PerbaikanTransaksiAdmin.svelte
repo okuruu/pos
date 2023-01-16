@@ -18,7 +18,10 @@
     let additionalInformation:string
 
     onMount(async () => {
-        const getData       = await fetch(globalURL + 'List-Perbaikan-Transaksi')
+        const getData       = await fetch(globalURL + 'List-Perbaikan-Transaksi', {
+            method: 'GET',
+            credentials: 'include'
+        })
         data                = await getData.json()
     })
 

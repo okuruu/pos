@@ -59,6 +59,8 @@
         availableOrders = await availablePurchaseOrders.json()
         // @ts-ignore
         availableOrders     = availableOrders.data
+
+        console.log(availableOrders)
     })
 
     function changeCurrentOrder(){
@@ -67,6 +69,9 @@
         cartData    = []
         totalPrice  = 0
         uniqueID    = null
+        totalPaid   = 0
+        totalPrice  = 0
+
 
         selectingOrders = true
         cartData        = availableOrders[indexAvailableOrders].DETAIL
@@ -291,6 +296,10 @@
                                     </td>
                                 </tr>
                                 {/each}
+                                <tr>
+                                    <td class="text-center fw-bold" colspan="5">Total</td>
+                                    <td class="text-center text-white fw-bold bg-success" colspan="2" >{ currencyFormat.format(totalPrice) }</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
