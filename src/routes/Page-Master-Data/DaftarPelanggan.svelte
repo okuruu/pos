@@ -1,6 +1,5 @@
 <script lang="ts">
     import { globalURL } from "../../lib/mainLink";
-    import { userResponse } from "../../lib/activeUser";
     import toast, { Toaster } from 'svelte-french-toast'
     import AutoComplete from "simple-svelte-autocomplete"
 
@@ -41,7 +40,6 @@
                 WHATSAPP            : nomorWhatsApp ,
                 TANGGAL_LAHIR       : tanggalLahir ,
                 GENDER              : gender ,
-                CREATED_BY          : userResponse.outlet ,
             })
         })
 

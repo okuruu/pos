@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { userResponse } from "../../lib/activeUser";
-    import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
     let uniqueCode:string
 
@@ -48,12 +47,8 @@
 
     async function fetchProdukOutlet(){
         const serverData        = await fetch(globalURL + 'Stok-Outlet', {
-            method : 'POST',
-            headers : { 'Content-Type' : 'application/json' },
+            method : 'GET',
             credentials : 'include',
-            body: JSON.stringify({
-                OUTLET : userResponse.outlet
-            })
         })
         stokOutlet    = await serverData.json()
     }
@@ -85,7 +80,6 @@
             headers: { 'Content-Type' : 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-                NIP : userResponse.nip,
                 TANGGAL : transaksiLama
             })
         })
@@ -152,9 +146,6 @@
             headers : { 'Content-Type' : 'application/json' },
             credentials : 'include',
             body: JSON.stringify({
-                NIP                 : userResponse.nip ,
-                NAMA                : userResponse.name ,
-                OUTLET              : userResponse.outlet ,
                 KODE                : uniqueCode,
                 TIPE_KESALAHAN      : tipeKesalahan,
                 KATEGORI_KESALAHAN  : kategoriKesalahan,

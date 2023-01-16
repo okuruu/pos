@@ -1,20 +1,20 @@
-import { globalURL } from "./mainLink";
+// import { globalURL } from "./mainLink";
 
-export async function activeUsers(){
+// export async function activeUsers(){
 
-    try {
+//     try {
         
-        const fetchUsers    = await fetch( globalURL + 'Ngig', {
-            method: 'GET',
-            credentials: 'include'
-        })
-        return await fetchUsers.json()
+//         const fetchUsers    = await fetch( globalURL + 'Ngig', {
+//             method: 'GET',
+//             credentials: 'include'
+//         })
+//         return await fetchUsers.json()
 
-    } catch (error) {
-        // 
-    }
+//     } catch (error) {
+//         // 
+//     }
 
 
-}
+// }
 
-export const userResponse = await activeUsers();
+// export const userResponse = await activeUsers();

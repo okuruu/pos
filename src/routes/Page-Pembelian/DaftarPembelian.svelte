@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { userResponse } from "../../lib/activeUser";
-    import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
     let availableOrders                 = []
     let cartData                        = []
@@ -45,6 +45,8 @@
 
         availableOrders     = await serverData.json()
 
+        console.log(availableOrders)
+
     })
 
     function changeCurrentOrder(){
@@ -55,6 +57,18 @@
         jamPengambilan          = availableOrders[indexAvailableOrders].PEMESANAN
         additionalInformation   = availableOrders[indexAvailableOrders].KETERANGAN
         supplier                = availableOrders[indexAvailableOrders].SUPPLIER
+
+        let detailHarga         = availableOrders[indexAvailableOrders].DETAIL_HARGA
+
+        bayarTunai               = detailHarga.TUNAI
+        depositPesanan           = detailHarga.DEPOSIT
+        eMoney                   = detailHarga.EMONEY
+        dpSoPesanan              = detailHarga.DPPESANAN
+        bayarKredit              = detailHarga.KREDIT
+        bayarDebit               = detailHarga.DEBIT
+        potonganHarga            = detailHarga.POTONGAN
+        totalPaid                = detailHarga.TOTAL
+
     }
 
     function inputToList(eventForm){
@@ -118,9 +132,6 @@
             headers: { 'Content-Type' : 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-                NIP         : userResponse.nip ,
-                NAMA        : userResponse.name ,
-                OUTLET      : userResponse.outlet,
                 KODE        : uniqueID,
                 SUPPLIER    : supplier,
                 KETERANGAN  : additionalInformation,
@@ -143,9 +154,13 @@
             })
         })
 
+        toast.success("Data berhasil disimpan")
+
     }
 
 </script>
+
+<Toaster />
 
 <div class="row my-7">
     <div class="col-sm-8 col-md-8 col-lg-8">

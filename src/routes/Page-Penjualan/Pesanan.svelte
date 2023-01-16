@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { currencyFormat } from "../../lib/currencyFormatter";
-    import AutoComplete from "simple-svelte-autocomplete"
-    import toast, { Toaster } from 'svelte-french-toast';
     import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import AutoComplete from "simple-svelte-autocomplete"
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
     let productInput;
     let currentSession  = null;
@@ -144,11 +144,6 @@
         }
 
         submittedReceipt = {
-            CASHIER : {
-                NIP     : bundlePenjualan.CASHIER.NIP,
-                NAMA    : bundlePenjualan.CASHIER.NAMA,
-                OUTLET  : bundlePenjualan.CASHIER.OUTLET
-            },
             DETAIL      : cartData,
             SALES       : selectedSales,
             PROMO       : selectedPromo,

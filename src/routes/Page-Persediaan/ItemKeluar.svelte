@@ -4,7 +4,6 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import AutoComplete from "simple-svelte-autocomplete";
     import { currencyFormat } from "../../lib/currencyFormatter";
-    import { userResponse } from "../../lib/activeUser";
 
     let personInCharge                      = []
     let stokOutlet:string[]                 = []
@@ -35,6 +34,8 @@
         })
 
         const serverResponse = await serverData.json()
+
+        console.log(serverResponse)
 
         stokOutlet          = serverResponse.STOK
         personInCharge      = serverResponse.PIC
@@ -108,9 +109,6 @@
             headers : { 'Content-Type' : 'applciation/json' },
             credentials : 'include',
             body : JSON.stringify({
-                NIP                 : userResponse.nip ,
-                NAMA                : userResponse.name ,
-                OUTLET              : userResponse.outlet,
                 TANGGAL_TRANSAKSI   : tanggalTransaksi,
                 TIPE_ITEM_KELUAR    : tipeKesalahan,
                 KETERANGAN          : additionalInformation,

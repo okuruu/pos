@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import toast, { Toaster } from 'svelte-french-toast';
-    import { userResponse } from "../../lib/activeUser";
     import { globalURL } from "../../lib/mainLink";
 
     let masterProduk:string[] = []
@@ -24,12 +23,8 @@
 
     async function loadStocks(){
         const getServer = await fetch(globalURL + 'Stok-Opname', {
-            method : 'POST',
-            headers : { 'Content-Type' : 'application/json' },
+            method : 'GET',
             credentials : 'include',
-            body: JSON.stringify({
-                OUTLET : userResponse.outlet
-            })
         })
 
         masterProduk            = await getServer.json()
@@ -62,9 +57,6 @@
             headers : { 'Content-Type' : 'application/json' },
             credentials : 'include',
             body : JSON.stringify({
-                NIP                 : userResponse.nip ,
-                NAMA                : userResponse.name ,
-                OUTLET              : userResponse.outlet,
                 KODE                : itemPlaceholder.KODE,
                 STOK_REAL           : itemPlaceholder.DATABASE,
                 STOK_FISIK          : itemPlaceholder.FISIK,

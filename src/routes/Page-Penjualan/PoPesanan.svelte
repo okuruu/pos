@@ -1,9 +1,9 @@
 <script lang="ts">
+    import { onMount } from "svelte"
+    import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast'
     import AutoComplete from "simple-svelte-autocomplete"
     import { currencyFormat } from "../../lib/currencyFormatter"
-    import { onMount } from "svelte"
-    import toast, { Toaster } from 'svelte-french-toast'
-    import { globalURL } from "../../lib/mainLink";
 
     let productInput
     let currentSession  = null
@@ -77,6 +77,17 @@
         cartData        = availableOrders[indexAvailableOrders].DETAIL
         totalPrice      = availableOrders[indexAvailableOrders].HARGA
         uniqueID        = availableOrders[indexAvailableOrders].UNIQUE
+
+        let detailHarga = availableOrders[indexAvailableOrders].DETAIL_HARGA
+
+        bayarTunai               = detailHarga.TUNAI
+        depositPesanan           = detailHarga.DEPOSIT
+        eMoney                   = detailHarga.EMONEY
+        dpSoPesanan              = detailHarga.DPPESANAN
+        bayarKredit              = detailHarga.KREDIT
+        bayarDebit               = detailHarga.DEBIT
+        potonganHarga            = detailHarga.POTONGAN
+        totalPaid                = detailHarga.TOTAL
 
     }
 
@@ -171,11 +182,6 @@
         }
 
         submittedReceipt = {
-            CASHIER : {
-                NIP     : bundlePenjualan.CASHIER.NIP,
-                NAMA    : bundlePenjualan.CASHIER.NAMA,
-                OUTLET  : bundlePenjualan.CASHIER.OUTLET
-            },
             DETAIL      : cartData,
             SALES       : selectedSales,
             PROMO       : selectedPromo,

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { globalURL } from "../../lib/mainLink";
-    import { userResponse } from "../../lib/activeUser";
     import toast, { Toaster } from 'svelte-french-toast';
     import AutoComplete from "simple-svelte-autocomplete"
     import { currencyFormat } from "../../lib/currencyFormatter";
@@ -123,9 +122,6 @@
             headers : { 'Content-Type' : 'application/json' },
             credentials : 'include',
             body : JSON.stringify({
-                NIP         : userResponse.nip,
-                NAMA        : userResponse.name,
-                OUTLET      : userResponse.outlet,
                 SUPPLIER    : selectedSupplier,
                 KETERANGAN  : additionalInformation ,
                 PEMBAYARAN  : {
