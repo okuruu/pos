@@ -60,7 +60,6 @@
         // @ts-ignore
         availableOrders     = availableOrders.data
 
-        console.log(availableOrders)
     })
 
     function changeCurrentOrder(){

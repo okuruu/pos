@@ -44,9 +44,6 @@
         })
 
         availableOrders     = await serverData.json()
-
-        console.log(availableOrders)
-
     })
 
     function changeCurrentOrder(){

@@ -17,6 +17,10 @@
     let treatmentDilakukan:string
     let additionalInformation:string
 
+    // Perbaikan Transaksi Admin Post!
+    let statusPerbaikan:string
+    let catatanAdministrator:string  = null
+
     onMount(async () => {
         const getData       = await fetch(globalURL + 'List-Perbaikan-Transaksi', {
             method: 'GET',
@@ -48,13 +52,23 @@
         additionalInformation   = detailResponse.PERBAIKAN.KETERANGAN
         requestPerbaikan        = detailResponse.REQUEST
 
-        console.log(requestPerbaikan)
-
         return dataDetail
     }
 
     async function doPost(event) {
-        console.log("Ha!")
+        
+        const postData      = await fetch(globalURL + 'Admin-Perbaikan-Transaksi', {
+            method : 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials : 'include',
+            body : JSON.stringify({
+                UNIQUE                  : uniqueCode,
+                STATUS                  : statusPerbaikan,
+                CATATAN_ADMINISTRATOR   : catatanAdministrator
+            })
+        });
+        const postResponse  = await postData.json()
+
     }
 
 </script>
@@ -202,33 +216,65 @@
 
                 <div class="separator separator-content border-dark my-15"><span class="w-350px fw-bold">{personInCharge}</span></div>
 
-                <div class="row">
-                    <div class="col-md-4 fv-row">
+                <div class="row mb-5">
+                    <div class="col-md-6 fv-row">
                         <label for="kesalahanLuarOutlet" class="d-flex align-items-center mb-2">
                             <span class="text-gray-700 fs-6 fw-bolder required">Jenis Kesalahan</span>
                         </label>
-                        <textarea class="form-control form-control-flush" readonly bind:value={tipeKesalahan} rows="2"></textarea>
+                        <input type="text" class="form-control form-control-solid" readonly bind:value={tipeKesalahan} />
                     </div>
-                    <div class="col-md-4 fv-row">
+                    <div class="col-md-6 fv-row">
                         <label for="kategoriKesalahan" class="mb-2">
                             <span class="text-gray-700 fs-6 fw-bolder">Kategori Kesalahan</span>
                         </label>
-                        <textarea class="form-control form-control-flush" readonly bind:value={kategoriKesalahan} rows="2"></textarea>
-                    </div>
-                    <div class="col-md-4 fv-row">
-                        <label for="treatmentDilakukan" class="mb-2">
-                            <span class="text-gray-700 fs-6 fw-bolder">Treatment Dilakukan</span>
-                        </label>
-                        <textarea class="form-control form-control-flush" readonly bind:value={treatmentDilakukan} rows="2"></textarea>
+                        <input type="text" class="form-control form-control-solid" readonly bind:value={kategoriKesalahan} />
                     </div>
                 </div>
 
-                <div class="d-flex flex-column mb-3 mt-5">
-                    <label for="deskripsiPerbaikan" class="mb-2">
-                        <span class="text-gray-700 fs-6 fw-bolder required">Deskripsi Perbaikan</span>
-                    </label>
-                    <div class="fv-row">
-                        <textarea bind:value={additionalInformation} class="form-control form-control-flush mb-3" readonly rows="6" placeholder="Deskripsi Perbaikan" ></textarea>
+                <div class="row">
+                    <div class="col-md-6 fv-row">
+                        <label for="treatmentDilakukan" class="mb-2">
+                            <span class="text-gray-700 fs-6 fw-bolder">Treatment Dilakukan</span>
+                        </label>
+                        <input type="text" class="form-control form-control-solid" readonly bind:value={treatmentDilakukan} />
+                    </div>
+                    <div class="col-md-6 fv-row">
+                        <label for="pilihStatus" class="required fs-6 fw-bold mb-2">Rubah Status</label>
+                        <select bind:value={statusPerbaikan} class="form-select">
+                            <option value="">Pilih Status...</option>
+                            <option value="Hold">Pending</option>		
+                            <option value="Reject">Reject</option>
+                            <option value="Approved">Approved</option>
+                            <option value="On Going">Approved + Proses</option>
+                            <option value="Done">Approved + Done</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+
+                        <div class="d-flex flex-column mb-3 mt-5">
+                            <label for="deskripsiPerbaikan" class="mb-2">
+                                <span class="text-gray-700 fs-6 fw-bolder required">Deskripsi Perbaikan</span>
+                            </label>
+                            <div class="fv-row">
+                                <textarea bind:value={additionalInformation} class="form-control form-control-solid mb-3" readonly rows="6" placeholder="Deskripsi Perbaikan" ></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col">
+
+                        <div class="d-flex flex-column mb-3 mt-5">
+                            <label for="deskripsiAdmin" class="mb-2">
+                                <span class="text-gray-700 fs-6 fw-bolder required">Catatan Administrator</span>
+                            </label>
+                            <div class="fv-row">
+                                <textarea bind:value={catatanAdministrator} class="form-control mb-3" rows="6" placeholder="Deskripsi Administrator" ></textarea>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

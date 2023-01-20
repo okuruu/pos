@@ -159,7 +159,6 @@
             })
         })
         const postResponse  = await willPost.json()
-        console.log(postResponse)
         event.target.reset()
         toast.success(postResponse)
     }

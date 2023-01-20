@@ -4,6 +4,7 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import AutoComplete from "simple-svelte-autocomplete"
     import { currencyFormat } from "../../lib/currencyFormatter";
+    import Akuntansi from "../Akuntansi.svelte";
 
     let productInput;
     let currentSession  = null;
@@ -22,6 +23,9 @@
     };
     let listOfSales = [];
     let listOfPromo = [];
+
+    // Checking apakah transaksi telah disimpan
+    let isSaved:boolean = false
 
     onMount(async () => {
         const response = await fetch(globalURL + 'Bundle-Penjualan', {
@@ -46,6 +50,7 @@
         };
         listOfSales = serverData.SALES;
         listOfPromo = serverData.KODE_PROMO;
+
     });
 
     // Input to cart
@@ -133,9 +138,11 @@
 
     async function doPost(){
         if(cartData == undefined || cartData.length == 0){
-            toast.error("Harap mengisi produk terlebih dahulu!", {
-                position: 'top-right'
-            });
+            return toast.error("Harap mengisi produk terlebih dahulu!");
+        }
+
+        if(totalPaid == null){
+            return toast.error("Harap mengisi pembayaran dengan benar!")
         }
 
         submittedReceipt = {
@@ -168,7 +175,19 @@
             credentials: 'include',
             body: JSON.stringify(submittedReceipt)
         });
+
         toast.success("Transaksi berhasil disimpan!");
+        isSaved = true
+    }
+
+    function doPrint(){
+
+        if(!isSaved){
+            return toast.error("Simpan transaksi terlebih dahulu!")
+        }
+
+        window.print()
+
     }
     
 </script>
@@ -386,8 +405,11 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" on:click={doPost} ><i class="las la-receipt fs-2 me-2"></i>Simpan Transaksi</button>
+                <div class="me-2">
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-primary" on:click={doPost} ><i class="las la-save fs-2 me-2"></i>Simpan Transaksi</button>
+                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>Cetak Transaksi</button>
+                </div>
             </div>
         </div>
     </div>

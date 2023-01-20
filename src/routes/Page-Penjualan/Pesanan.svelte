@@ -166,7 +166,6 @@
             JAM_PESAN       : jamPengambilan,
             KONTAK          : kontakPemesanan
         };
-        console.log(submittedReceipt)
         const postData = await fetch(globalURL + 'Post-Penjualan', {
             method : 'POST',
             headers : {

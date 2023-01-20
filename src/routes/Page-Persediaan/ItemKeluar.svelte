@@ -35,8 +35,6 @@
 
         const serverResponse = await serverData.json()
 
-        console.log(serverResponse)
-
         stokOutlet          = serverResponse.STOK
         personInCharge      = serverResponse.PIC
         kategoriItemKeluar  = serverResponse.KATEGORI

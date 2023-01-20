@@ -45,10 +45,10 @@
 
         const formResponse = await formData.json()
 
-        if(formResponse.message == "success"){
-            toast.success("Data berhasil disimpan!")
+        if(formResponse.status == "success"){
+            toast.success(formResponse.message)
         } else {
-            toast.error("Ada masalah dengan server. Coba lagi nanti")
+            toast.error(formResponse.message)
         }
         return eventForm.target.reset();
     }
