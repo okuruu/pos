@@ -1,35 +1,113 @@
 <script lang="ts">
-        function runRepeater(){
-            let kodeNama    = ['Judul','buktiUpload','Nominal']
-            let inputNama   = ['JUDUL[]','BUKTI[]','NOMINAL[]']
-            var container   = document.getElementById('itemPlaceholder')
+    import { onMount } from "svelte";
+    import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
-            for(let i = 0 ; i < kodeNama.length ; i++){
-                var div         = document.createElement('div')
-                div.setAttribute('class','col-md-4')
+    let pilihAkun:string
+    let pilihTanggal:any
 
+    let listItemKeluar:string[] = []
+    let listAkun:string[]       = []
+
+    onMount(async () => {
+        getData()
+    })
+
+    async function getData(){
+        const getData = await fetch(globalURL + 'Kas-Keluar', {
+            method : 'GET',
+            credentials: 'include'
+        })
+
+        const getResponse = await getData.json()
+        listAkun        = getResponse.OPSI
+        listItemKeluar  = getResponse.DETAIL
+    }
+
+    function runRepeater(){
+        let kodeNama    = ['Judul','buktiUpload','Nominal']
+        let inputNama   = ['JUDUL[]','BUKTI[]','NOMINAL[]']
+        var container   = document.getElementById('itemPlaceholder')
+
+        for(let i = 0 ; i < kodeNama.length ; i++){
+            var div         = document.createElement('div')
+            div.setAttribute('class','col-md-4')
+
+            var inputData = document.createElement('input')
+                inputData.setAttribute('class','form-control form-control-sm mb-3')
+                inputData.setAttribute('placeholder',kodeNama[i])
+                inputData.setAttribute('name',inputNama[i])
+
+            if(kodeNama[i] == 'Nominal'){
+                inputData.setAttribute('inputMode','decimal')
+                inputData.setAttribute('onFocus',"this.type='number'; this.value=this.lastValue")
+                inputData.setAttribute('onBlur',"this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()")
+            } else if(kodeNama[i] == 'buktiUpload'){
                 var inputData = document.createElement('input')
-                    inputData.setAttribute('class','form-control form-control-sm mb-3')
-                    inputData.setAttribute('placeholder',kodeNama[i])
-                    inputData.setAttribute('name',inputNama[i])
-
-                if(kodeNama[i] == 'Nominal'){
-                    inputData.setAttribute('inputMode','decimal')
-                    inputData.setAttribute('onFocus',"this.type='number'; this.value=this.lastValue")
-                    inputData.setAttribute('onBlur',"this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()")
-                } else if(kodeNama[i] == 'buktiUpload'){
-                    var inputData = document.createElement('input')
-                    inputData.setAttribute('type','file')
-                    inputData.setAttribute('class','form-control form-control-sm mb-3')
-                    inputData.setAttribute('placeholder',kodeNama[i])
-                    inputData.setAttribute('name',inputNama[i])                    
-                }
-
-                div.appendChild(inputData)
-                container.appendChild(div)
+                inputData.setAttribute('type','file')
+                inputData.setAttribute('class','form-control form-control-sm mb-3')
+                inputData.setAttribute('placeholder',kodeNama[i])
+                inputData.setAttribute('name',inputNama[i])                    
             }
+
+            div.appendChild(inputData)
+            container.appendChild(div)
         }
+    }
+
+    function clearAll(){
+        pilihAkun       = null 
+        pilihTanggal    = null
+    }
+
+    async function doPost(){
+        var inputJudul      = document.getElementsByName('JUDUL[]')
+        var inputBukti      = document.getElementsByName('BUKTI[]')
+        var inputNominal    = document.getElementsByName('NOMINAL[]')
+
+        let listJudul       = []
+        let listBukti       = []
+        let listNominal     = []
+
+        var formFile = new FormData()
+        formFile.append("AKUN",pilihAkun)
+        formFile.append("TANGGAL",pilihTanggal)
+
+        for(let i = 0 ; i < inputJudul.length; i++){
+            var totalJudul      = inputJudul[i].value
+            var totalBukti      = inputBukti[i].files[0]
+            var totalNominal    = inputNominal[i].value
+            
+            listJudul.push(totalJudul)
+            listJudul = listJudul
+
+            listBukti.push(totalBukti)
+            listBukti = listBukti
+
+            listNominal.push(totalNominal)
+            listNominal = listNominal
+
+            formFile.append('JUDUL[]', totalJudul)
+            formFile.append('BUKTI[]', totalBukti)
+            formFile.append('NOMINAL[]', totalNominal)
+
+        }
+
+        const postData = await fetch(globalURL + 'Kas-Keluar', {
+            method: 'POST',
+            credentials: 'include',
+            body : formFile
+        })
+
+        const respo = await postData.json()
+        toast.success(respo)
+        getData()
+    }
+
 </script>
+
+<Toaster />
 
 <div class="card card-flush shadow-sm mb-7">
     <div class="card-header">
@@ -73,23 +151,25 @@
             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
                 <thead>
                     <tr class="fw-bold">
-                        <th>No Transaksi</th>
+                        <th>No.</th>
                         <th>Tanggal</th>
-                        <th>Keterangan</th>
-                        <th>Kode Akun</th>
+                        <th>Person in Charge</th>
                         <th>Nama Akun</th>
                         <th>Total</th>
+                        <th>Tanggal Dibuat</th>
                     </tr>
                 </thead>
                 <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>                                
+                    {#each listItemKeluar as data, index }
+                    <tr>
+                        <td>{ index + 1 }</td>
+                        <td>{ data.TANGGAL }</td>
+                        <td>{ data.NAMA }</td>
+                        <td>{ data.MASUK_AKUN }</td>
+                        <td>{ currencyFormat.format(data.NOMINAL) }</td>
+                        <td>{ data.CREATED_AT }</td>
+                    </tr>
+                    {/each}
                 </tbody>
             </table>
         </div>
@@ -122,10 +202,11 @@
                         <span>Masuk ke Akun</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <select class="form-select form-select-sm">
+                        <select bind:value={pilihAkun} class="form-select form-select-sm">
                             <option value="">Pilih Akun</option>
-                            <option value="Kas Kecil">Kas Kecil</option>
-                            <option value="Kas Manajemen">Kas Manajemen</option>
+                            {#each listAkun as akun}
+                                <option value="{akun.KODE}">{ akun.KETERANGAN }</option>
+                            {/each}
                         </select>
                     </div>
                 </div>
@@ -135,7 +216,7 @@
                         <span>Atur Tanggal</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="date" class="form-control form-control-sm" />
+                        <input bind:value={pilihTanggal} type="date" class="form-control form-control-sm" />
                     </div>
                 </div>
 
@@ -160,8 +241,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-primary"><i class="las la-save fs-2 me-2"></i>Simpan</button>
-                <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Tutup</button>
+                <button type="submit" on:click={doPost} class="btn btn-sm btn-primary"><i class="las la-save fs-2 me-2"></i>Simpan</button>
+                <button type="button" on:click={clearAll} class="btn btn-sm btn-light" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

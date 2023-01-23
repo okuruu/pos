@@ -1,3 +1,84 @@
+<script lang="ts">
+    import { onMount } from "svelte";
+    import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
+
+    let kasTransfer:string[]    = []
+    let listAkun:string[]       = []
+    
+    let tanggalTransfer:any
+    let keterangan:string
+    let firstOption:string
+    let secondOption:string
+    let firstTotal:number       = 0
+    let secondTotal:number      = 0
+
+    let nominalTransfer:number
+
+    onMount(async () => {
+        getData()
+    })
+
+    async function getData(){
+        const getData = await fetch(globalURL + 'Kas-Transfer', {
+            method: 'GET',
+            credentials : 'include'
+        })
+        const getResponse = await getData.json()
+
+        kasTransfer = getResponse.DETAIL
+        listAkun    = getResponse.OPSI
+    }
+
+    function changeOptions(){
+        let firstValue      = listAkun.find( e => e.KODE === firstOption )
+        let secondValue     = listAkun.find( e => e.KODE === secondOption )
+
+        if(firstValue == null){
+            firstTotal = 0
+        } else if (secondValue == null){
+            secondTotal = 0
+        }
+
+        firstTotal = firstValue.NOMINAL
+        secondTotal = secondValue.NOMINAL
+    }
+
+    function clearAll(){
+        tanggalTransfer = null
+        keterangan      = null
+        firstOption     = null
+        secondOption    = null
+        firstTotal      = 0
+        secondTotal     = 0 
+        nominalTransfer = 0
+    }
+
+    async function doPost(){
+        const postData = await fetch(globalURL + 'Kas-Transfer', {
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                TANGGAL : tanggalTransfer,
+                KETERANGAN : keterangan,
+                DARI : firstOption,
+                KE: secondOption,
+                NOMINAL : nominalTransfer
+            })
+        })
+
+        const serverResponse = await postData.json()
+
+        toast.success(serverResponse)
+        getData()
+    }
+
+</script>
+
+<Toaster />
+
 <div class="card card-flush shadow-sm mb-7">
     <div class="card-header">
         <h3 class="card-title fw-bold">Kas Transfer</h3>
@@ -40,23 +121,27 @@
             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center text-dark">
                 <thead>
                     <tr class="fw-bold">
-                        <th>No Transaksi</th>
+                        <th>No.</th>
+                        <th>Nama</th>
                         <th>Tanggal</th>
-                        <th>Keterangan</th>
-                        <th>Kode Akun</th>
-                        <th>Nama Akun</th>
-                        <th>Total</th>
+                        <th>Dari</th>
+                        <th>Ke</th>
+                        <th>Nominal</th>
+                        <th>Tanggal Dibuat</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {#each kasTransfer as data, index }
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>                                
+                            <td>{ index + 1 }</td>
+                            <td>{ data.NAMA }</td>
+                            <td>{ data.TANGGAL }</td>
+                            <td>{ data.DARI }</td>
+                            <td>{ data.KE }</td>
+                            <td>{ currencyFormat.format(data.NOMINAL) }</td>
+                            <td>{ data.CREATED_AT }</td>
+                        </tr>
+                    {/each}
                 </tbody>
             </table>
         </div>
@@ -89,12 +174,12 @@
                         <span>Atur Tanggal</span>
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <input type="date" class="form-control form-control-sm" />
+                        <input type="date" bind:value={tanggalTransfer} class="form-control form-control-sm" />
                     </div>
                 </div>
 
                 <div class="form-floating">
-                    <textarea class="form-control" placeholder="Berikan keterangan untuk Kas Transfer" style="height: 100px"></textarea>
+                    <textarea bind:value={keterangan} class="form-control" placeholder="Berikan keterangan untuk Kas Transfer" style="height: 100px"></textarea>
                     <label for="keteranganKasTransfer">Keterangan</label>
                 </div>
 
@@ -104,13 +189,16 @@
                     <label for="saldoTransferAwal" class="col-lg-4 col-form-label required fw-bold fs-6">Dari Akun</label>
                     <div class="col-lg-8">
                         <div class="row">
-                            <div class="col-lg-6 fv-row">
-                                <select class="form-select form-select-sm">
+                            <div class="col-lg-6 mb-3 fv-row">
+                                <select bind:value={firstOption} on:change={changeOptions} class="form-select form-select-sm">
                                     <option value="">Pilih Akun</option>
+                                    {#each listAkun as selectFirst}
+                                        <option value="{selectFirst.KODE}">{ selectFirst.KETERANGAN }</option>
+                                    {/each}
                                 </select>
                             </div>
                             <div class="col-lg-6 fv-row">
-                                <input type="text" class="form-control form-control-sm form-control-solid" placeholder="Rp. -" readonly />
+                                <input type="text" class="form-control form-control-sm form-control-solid" value={ currencyFormat.format(firstTotal) } placeholder="Rp. -" readonly />
                             </div>
                         </div>
                     </div>
@@ -120,13 +208,27 @@
                     <label for="saldoTransferKepada" class="col-lg-4 col-form-label required fw-bold fs-6">Transfer Ke</label>
                     <div class="col-lg-8">
                         <div class="row">
-                            <div class="col-lg-6 fv-row">
-                                <select class="form-select form-select-sm">
+                            <div class="col-lg-6 mb-3 fv-row">
+                                <select bind:value={secondOption} on:change={changeOptions} class="form-select form-select-sm">
                                     <option value="">Pilih Akun</option>
+                                    {#each listAkun as selectSecond}
+                                        <option value="{selectSecond.KODE}">{ selectSecond.KETERANGAN }</option>
+                                    {/each}
                                 </select>
                             </div>
                             <div class="col-lg-6 fv-row">
-                                <input type="text" class="form-control form-control-sm form-control-solid" placeholder="Rp. -" readonly />
+                                <input type="text" class="form-control form-control-sm form-control-solid" value={ currencyFormat.format(secondTotal) } placeholder="Rp. -" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label for="saldoTransferKepada" class="col-lg-4 col-form-label required fw-bold fs-6">Nominal Transfer</label>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12 fv-row">
+                                <input type="text" bind:value={nominalTransfer} class="form-control form-control-sm" placeholder="Masukkan Nominal" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()"  />
                             </div>
                         </div>
                     </div>
@@ -135,8 +237,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-primary"><i class="las la-save fs-2 me-2"></i>Simpan</button>
-                <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Tutup</button>
+                <button type="submit" on:click={doPost} class="btn btn-sm btn-primary"><i class="las la-save fs-2 me-2"></i>Simpan</button>
+                <button type="button" on:click={clearAll} class="btn btn-sm btn-light" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

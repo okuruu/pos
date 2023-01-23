@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { currencyFormat } from "../../lib/currencyFormatter";
     import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { currencyFormat } from "../../lib/currencyFormatter";
 
     let uniqueCode:string
     let personInCharge:string       = 'Memuat..'
@@ -69,9 +70,16 @@
         });
         const postResponse  = await postData.json()
 
+        toast.success("Berhasil memperbaiki detail transaksi!", {
+            icon: '👏',
+        })
+
     }
 
 </script>
+
+<Toaster />
+
 <div class="card shadow-sm my-7">
     <div class="card-header">
         <h3 class="card-title fw-bold">Perbaikan Transaksi (Administrator)</h3>

@@ -4,7 +4,6 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import AutoComplete from "simple-svelte-autocomplete"
     import { currencyFormat } from "../../lib/currencyFormatter";
-    import Akuntansi from "../Akuntansi.svelte";
 
     let productInput;
     let currentSession  = null;
