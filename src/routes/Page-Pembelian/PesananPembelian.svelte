@@ -220,6 +220,15 @@
         <div class="card shadow-sm mb-7">
             <div class="card-body">
 
+                <div class="card bg-success shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-white">Total:</h6>
+                        <h1 class="text-white p-25">{ currencyFormat.format(totalPrice) }</h1>
+                    </div>
+                </div>
+
+                <div class="separator separator-dotted border-success my-3"></div>
+
                 <div class="fv-row mb-2">
                     <label for="pilihCS" class="form-label fs-6 fw-bolder mb-3">Pilih Supplier</label>
                     <select bind:value={ selectedSupplier } class="form-select">
@@ -256,11 +265,9 @@
             <div class="modal-header">
                 <h3 class="modal-title">Pembayaran</h3>
 
-                <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="svg-icon svg-icon-1"></span>
                 </div>
-                <!--end::Close-->
             </div>
 
             <div class="modal-body">

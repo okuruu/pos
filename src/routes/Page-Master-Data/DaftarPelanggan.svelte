@@ -169,11 +169,11 @@
                     <div class="col-lg-6 fv-row">
                         <div class="d-flex align-items-center text-center mt-3">
                             <label class="form-check form-check-inline form-check-solid me-5">
-                                <input class="form-check-input" bind:group={gender} type="radio" value="Pria" checked required/>
+                                <input class="form-check-input" bind:group={gender} type="radio" value="Pria" required/>
                                 <span class="fw-bold ps-2 fs-6">Pria</span>
                             </label>
                             <label class="form-check form-check-inline form-check-solid">
-                                <input class="form-check-input" bind:group={gender} type="radio" value="Wanita" required/>
+                                <input class="form-check-input" bind:group={gender} type="radio" checked value="Wanita" required/>
                                 <span class="fw-bold ps-2 fs-6">Wanita</span>
                             </label>
                         </div>
@@ -186,9 +186,6 @@
     
     </form>
 
-    </div>
-    <div class="card-footer">
-        Footer
     </div>
 </div>
 
@@ -210,7 +207,7 @@
                         Cari Member
                     </label>
                     <div class="col-lg-8 fv-row">
-                        <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control" placeholder="Cari Member.." hideArrow />
+                        <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="SEARCH" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control" placeholder="Cari Member.." hideArrow />
                     </div>
                 </div>
 
