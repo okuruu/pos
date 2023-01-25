@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { globalURL } from "../../lib/mainLink";
     import toast, { Toaster } from 'svelte-french-toast';
     import AutoComplete from "simple-svelte-autocomplete"
+    import { globalURL} from "../../lib/mainLink";
     import { currencyFormat } from "../../lib/currencyFormatter";
+
+    let lastTransactionID = null
 
     let productInput;
     let currentSession  = null;
@@ -175,6 +177,9 @@
             body: JSON.stringify(submittedReceipt)
         });
 
+        const postResponse = await postData.json()
+        lastTransactionID = postResponse.receiptNumber
+
         toast.success("Transaksi berhasil disimpan!");
         isSaved = true
     }
@@ -184,9 +189,7 @@
         if(!isSaved){
             return toast.error("Simpan transaksi terlebih dahulu!")
         }
-
-        window.print()
-
+        window.open('/public/reports/80mm.html?last=' + lastTransactionID ,'_blank').focus()
     }
     
 </script>
@@ -201,6 +204,9 @@
             <div class="card shadow-sm">
                 <div class="card-header">
                     <h3 class="card-title fw-bold">Penjualan Kasir</h3>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-sm btn-success">Total: { currencyFormat.format(totalPrice) }</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     
@@ -407,7 +413,8 @@
                 <div class="me-2">
                     <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-sm btn-primary" on:click={doPost} ><i class="las la-save fs-2 me-2"></i>Simpan Transaksi</button>
-                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>Cetak Transaksi</button>
+                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>80mm</button>
+                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>58mm</button>
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
-    import DaftarItem from "./Page-Master-Data/DaftarItem.svelte";
+    import UpdateHarga from "./Page-Master-Data/Administrator/UpdateHarga.svelte";
+import DaftarItem from "./Page-Master-Data/DaftarItem.svelte";
     import DaftarPelanggan from "./Page-Master-Data/DaftarPelanggan.svelte";
     import DaftarSales from "./Page-Master-Data/DaftarSales.svelte";
     import DaftarSupplier from "./Page-Master-Data/DaftarSupplier.svelte";
@@ -36,6 +37,10 @@
                     <div class="separator my-2"></div>
 
                     <button type="button" on:click={ () => { currentPage = 'deskripsiLain' } } class="btn btn-sm w-100 mb-1">Satuan & Deskripsi Lain</button>
+                    
+                    <div class="separator my-2"></div>
+
+                    <button type="button" on:click={ () => { currentPage = 'masterUpdate' } } class="btn btn-sm w-100 mb-1">Update Item</button>
 
                 </div>
             </div>
@@ -59,6 +64,8 @@
                 <GrupPelanggan />
             {:else if currentPage == 'deskripsiLain'}
                 <DeskripsiLain />
+            {:else if currentPage == 'masterUpdate'}
+                <UpdateHarga />
             {/if}
 
         </div>

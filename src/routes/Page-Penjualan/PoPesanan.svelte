@@ -254,6 +254,9 @@
             <div class="card shadow-sm my-6">
                 <div class="card-header">
                     <h3 class="card-title">Penjualan Kasir</h3>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-sm btn-success">Total: { currencyFormat.format(totalPrice) }</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     

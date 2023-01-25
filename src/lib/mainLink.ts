@@ -4,3 +4,4 @@
 
 export let globalURL:string = "http://localhost:8080/api/v1/";
 export let mainURL:string   = "http://localhost:8080/"
+export let siteURL:string   = "http://localhost:5173/"

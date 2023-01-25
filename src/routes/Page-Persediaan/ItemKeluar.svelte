@@ -134,7 +134,7 @@
                 <h3 class="card-title fw-bold">Item Keluar</h3>
                 <div class="card-toolbar">
                     <div class="me-2">
-                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pilihPIC"><i class="las la-user-tag fs-2 me-2"></i>Munculkan PIC</button>
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#pilihPIC"><i class="las la-user-tag fs-2 me-2"></i>Munculkan PIC</button>
                     </div>
                 </div>
             </div>
@@ -199,6 +199,11 @@
     <div class="col-sm-4 col-md-4 col-lg-4">
 
         <div class="card shadow-sm">
+            <div class="card-header">
+                <div class="card-toolbar">
+                    <button type="button" class="btn btn-sm btn-success">Total: { currencyFormat.format(totalPrice) }</button>
+                </div>
+            </div>
             <div class="card-body">
                 
                 <div class="fv-row my-4">

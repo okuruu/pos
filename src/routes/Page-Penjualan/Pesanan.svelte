@@ -194,6 +194,9 @@
                     <h3 class="card-title">
                         <input type="text" class="form-control form-control-flush w-100" readonly bind:value="{latestTransactionNumber}" placeholder="Nomor Pesanan Terakhir : -" >
                     </h3>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-sm btn-success">Total: { currencyFormat.format(totalPrice) }</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     
