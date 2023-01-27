@@ -46,7 +46,9 @@
                     <th>Nama</th>
                     <th>Harga Jual</th>
                     <th>Satuan</th>
-                    <th>Stok</th>
+                    <th>Stok All</th>
+                    <th>Stok Pesanan</th>
+                    <th>Stok Available</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,6 +60,8 @@
                     <td>{ currencyFormat.format(data.HARGA) }</td>
                     <td>{ data.SATUAN }</td>
                     <td>{ data.STOK_REAL }</td>
+                    <td>{ data.PESANAN }</td>
+                    <td class="text-success"><u>{ data.STOK_REAL - data.PESANAN }</u></td>
                 </tr>                    
                 {/each }
             </tbody>

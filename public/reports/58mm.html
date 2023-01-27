@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Nota Penjualan</title>
+        <style>
+            * {
+                font-size: 10px;
+                font-family: 'Times New Roman';
+            }
+
+            td, th, tr, table {
+                border-collapse: collapse;
+                width: 50mm;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+
+            tbody {
+                border-top: 2px dotted #bbb;
+                padding-top: 5px;
+                padding-bottom: 5px;
+            }
+
+            td.informasi, th.informasi{
+                width: 90px;
+                max-width: 90px;
+            }
+
+            td.description, th.description {
+                width: 95px;
+                max-width: 95px;
+            }
+
+            td.quantity, th.quantity {
+                width: 20px;
+                max-width: 20px;
+                word-break: break-all;
+                text-align: center;
+            }
+
+            td.price, th.price {
+                width: 40px;
+                max-width: 40px;
+                word-break: break-all;
+                text-align: center;
+            }
+
+            .centered {
+                text-align: center;
+                align-content: center;
+            }
+
+            .ticket {
+                width: 155px;
+                max-width: 155px;
+            }
+
+            .nengah{
+                margin-left: auto;
+                margin-right: auto;
+                width: 50mm;
+            }
+
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+            }
+
+            .separator {
+                width: 50mm;
+                padding-top: 20px;
+            }
+
+            .line-separator {
+                border-top: 2px dotted #bbb;
+            }
+
+            .align-right{
+                text-align: right;
+            }
+
+            .headerInformation{
+                border: 0px;
+                text-align: center;
+            }
+
+            .listProduk{
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            .sign{
+                line-height: 100px;
+            }
+
+            .headerSign{
+                margin-bottom: 20px;
+            }
+
+            .keterangan{
+                text-align: justify;
+            }
+
+            @media print {
+                .hidden-print,
+                .hidden-print * {
+                    display: none !important;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ticket">
+
+            <div class="nengah">
+                <img src="/receiptLogo.bmp" class="img" alt="Logo">
+                <p class="centered"><strong>Faktur Penjualan</strong> 
+                <p class="centered"><strong>Dea Pakis</strong> 
+                    <br>
+                    <br>Jl. Raya Pakis, Ruko Pakis Kembar Kav.4 
+                    <br>
+                    <br>08984170335 (CS)
+                </p>
+                <table>
+                    <tbody class="headerInformation">
+                        <tr>
+                            <td style="width: 29%;">No. Trsk</td>
+                            <td style="width: 1%;">:</td>
+                            <td id="nomorTransaksi" style="width: 70%;">PKS/21770/2101-00001</td>
+                        </tr>
+                        <tr>
+                            <!-- Tanggal Transaksi -->
+                            <td>Tanggal</td>
+                            <td>:</td>
+                            <td id="purchaseDate"></td>
+                        </tr>
+                        <tr>
+                            <td>Plgn</td>
+                            <td>:</td>
+                            <td id="responsibleMember"></td>
+                        </tr>
+                    </tbody>
+                </table>   
+            </div>
+
+            <div class="listProduk">
+                <table>
+                    <thead class="line-separator">
+                        <tr>
+                            <th class="description">Produk</th>
+                            <th class="quantity">Qty</th>
+                            <th class="price">Rp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailProduk">
+                        
+                    </tbody>
+                </table>
+
+                <table>
+                    <tbody>
+                        <tr class="align-right">
+                            <td class="description">Sub Total :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="totalPaid" class="price"></td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">Potongan :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="nilaiPotongan" class="price"></td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">Pajak :</td>
+                            <td class="quantity">Rp. </td>
+                            <td class="price">0</td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">Total Akhir :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="totalAll" class="price"></td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">DP :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="depositPesanan" class="price"></td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">Bayar Tunai :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="cashUpfront" class="price"></td>
+                        </tr>
+                        <tr class="align-right">
+                            <td class="description">Kembali :</td>
+                            <td class="quantity">Rp. </td>
+                            <td id="spareChange" class="price"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="align-right">
+                <p> Pesanan Telah Diterima </p> 
+            </div>
+
+            <table class="centered">
+                <tbody class="headerInformation">
+                    <tr>
+                        <th>Petugas <br> Outlet</th>
+                        <th>Persetujuan <br> Customer</th>
+                    </tr>
+                    <tr class="sign">
+                        <td>(.......................)</td>
+                        <td>(.......................)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="centered nengah">
+                <i>Terima kasih telah <br> mengunjungi Outlet Kami </i>
+                <br><br>
+                <p id="responsibleCashier"></p>
+                <!-- Tanggal Cetak -->
+                <p>24/01/2023 10:20 WIB</p>
+                <p>Keterangan : </p>
+                <p class="keterangan">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum dolorum aperiam optio, eos esse nam molestias officia at tempora earum ipsa vitae architecto eveniet laboriosam fuga, non, blanditiis quis doloribus.</p>
+            </div>
+
+            <div class="separator"></div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td id="purchaseDate"></td>
+                        <td id="purchaseHour" class="align-right"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <button id="btnPrint" class="hidden-print">Cetak Nota</button>
+        <script>
+            const $btnPrint = document.querySelector("#btnPrint");
+            $btnPrint.addEventListener("click", () => {
+                window.print();
+            });
+
+            const globalURL     = "http://localhost:8080/api/v1/"
+            let produkDetail    = []
+
+            async function getData(){
+                const queryString   = window.location.search
+                const urlParams     = new URLSearchParams(queryString)
+
+                const receiptOrder  = urlParams.get('last')
+
+                const getData = await fetch(globalURL + 'Reports/80mm/' + receiptOrder, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+
+                const getResponse   = await getData.json()
+                produkDetail        = getResponse.data.PRODUK
+                console.log(getResponse)
+
+            //     // Dapatkan semua id dari nota!
+                var nomorTransaksi  = document.getElementById('nomorTransaksi')
+                var tabelProduk     = document.getElementById('detailProduk')
+                var totalAll        = document.getElementById('totalAll')
+                var cashier         = document.getElementById('responsibleCashier')
+                var member          = document.getElementById('responsibleMember')
+                var totalPaid       = document.getElementById('totalPaid')
+                var potongan        = document.getElementById('nilaiPotongan')
+                var dp              = document.getElementById('depositPesanan')
+                var cash            = document.getElementById('cashUpfront')
+                var change          = document.getElementById('spareChange')
+                var date            = document.getElementById('purchaseDate')
+                var hour            = document.getElementById('purchaseHour')
+
+                nomorTransaksi.innerHTML    = getResponse.data.NOMOR
+                totalAll.innerHTML          = getResponse.data.TOTAL_AKHIR
+                cashier.innerHTML           = "Staff: " + getResponse.data.KASIR
+                member.innerHTML            = getResponse.data.PELANGGAN
+                totalPaid.innerHTML         = getResponse.data.TOTAL_TRANSAKSI
+                potongan.innerHTML          = getResponse.data.POTONGAN
+                dp.innerHTML                = getResponse.data.DP
+                cash.innerHTML              = getResponse.data.TOTAL_BAYAR
+                change.innerHTML            = getResponse.data.KEMBALIAN
+                date.innerHTML              = getResponse.data.TANGGAL
+                hour.innerHTML              = getResponse.data.JAM + " WIB"
+
+                produkDetail.forEach(element => {
+                    tabelProduk.innerHTML += `
+                    <tr>
+                        <td class="description">${element.NAMA_ITEM}</td>
+                        <td class="quantity">${element.JUMLAH}</td>
+                        <td class="price">${element.HARGA}</td>
+                    </tr>
+                    `
+                });
+
+            }
+
+            window.onload = getData;
+
+        </script>
+    </body>
+</html>

@@ -184,12 +184,12 @@
         isSaved = true
     }
 
-    function doPrint(){
+    function doPrint(paperSize){
 
         if(!isSaved){
             return toast.error("Simpan transaksi terlebih dahulu!")
         }
-        window.open('/public/reports/80mm.html?last=' + lastTransactionID ,'_blank').focus()
+        window.open('/public/reports/'+ paperSize +'.html?last=' + lastTransactionID ,'_blank').focus()
     }
     
 </script>
@@ -413,8 +413,8 @@
                 <div class="me-2">
                     <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-sm btn-primary" on:click={doPost} ><i class="las la-save fs-2 me-2"></i>Simpan Transaksi</button>
-                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>80mm</button>
-                    <button type="button" class="btn btn-sm btn-info" on:click={doPrint}><i class="las la-receipt fs-2 me-2"></i>58mm</button>
+                    <button type="button" class="btn btn-sm btn-info" on:click={ () => doPrint('80mm')}><i class="las la-receipt fs-2 me-2"></i>80mm</button>
+                    <button type="button" class="btn btn-sm btn-info" on:click={ () => doPrint('58mm')}><i class="las la-receipt fs-2 me-2"></i>58mm</button>
                 </div>
             </div>
         </div>
