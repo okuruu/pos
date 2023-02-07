@@ -86,7 +86,7 @@
         bayarKredit              = detailHarga.KREDIT
         bayarDebit               = detailHarga.DEBIT
         potonganHarga            = detailHarga.POTONGAN
-        totalPaid                = detailHarga.TOTAL
+        totalPaid                = detailHarga.TOTAL_BAYAR
 
     }
 

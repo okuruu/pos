@@ -295,7 +295,6 @@
                         <label for="cariMember" class="col-sm-4 col-form-label fw-bold fs-6">
                             <span>Cari Member</span>
                         </label>
-                       
                         <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
                     </div>
 

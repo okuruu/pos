@@ -2,6 +2,7 @@
     import Penjualan from './Page-Penjualan/Penjualan.svelte';
     import Pesanan from './Page-Penjualan/Pesanan.svelte';
     import PoPesanan from './Page-Penjualan/PoPesanan.svelte';
+    import DaftarPesanan from './Page-Penjualan/DaftarPesanan.svelte';
 
     let currentPage:string = "Penjualan";
 
@@ -16,6 +17,7 @@
                     <button type="button" on:click={ () => { currentPage = 'Penjualan' } } class="btn btn-sm btn-primary">Penjualan</button>
                     <button type="button" on:click={ () => { currentPage = 'Pesanan' } } class="btn btn-sm btn-success">Pesanan</button>
                     <button type="button" on:click={ () => { currentPage = 'Checkout' } } class="btn btn-sm btn-danger">Checkout</button>
+                    <button type="button" on:click={ () => { currentPage = 'Daftar' } } class="btn btn-sm btn-info">Daftar Pesanan</button>
                 </div>
             </div>
         </div>
@@ -28,4 +30,6 @@
     <Penjualan />
 {:else if currentPage == 'Checkout' }
     <PoPesanan />
+{:else if currentPage == 'Daftar'}
+    <DaftarPesanan />
 {/if}

@@ -176,6 +176,7 @@
         });
 
         const serverResponse    = await postData.json();
+
         latestTransactionNumber = serverResponse.latestNumber
         toast.success("Transaksi berhasil disimpan!");
     }
