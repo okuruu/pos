@@ -60,7 +60,8 @@
             credentials: 'include',
             body: JSON.stringify({
                 KODE: currentCode,
-                NOMINAL : currentDeposit
+                NOMINAL : currentDeposit,
+                KETERANGAN : 'Deposit Transaksi'
             })
         })
 
