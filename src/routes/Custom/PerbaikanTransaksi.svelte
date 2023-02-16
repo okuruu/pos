@@ -10,7 +10,8 @@
     let stokOutlet:string[]         = []
 
     let currentDate:string          = 'Fetching..'
-    let transaksiLama
+    let transaksiStart
+    let transaksiEnd
     let dataRekap                   = []
     let dataDetail                  = []
     let noTransaksiDetail:string    = 'Memuat..'
@@ -80,7 +81,8 @@
             headers: { 'Content-Type' : 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-                TANGGAL : transaksiLama
+                START   : transaksiStart,
+                END     : transaksiEnd
             })
         })
         const dayReportResponse = await dayReport.json()
@@ -171,19 +173,35 @@
     <div class="card-header">
         <h3 class="card-title fw-bold">Perbaikan Transaksi  - <span class="text-danger px-2"> { currentDate } </span> </h3>
         <div class="card-toolbar">
-            <form on:submit|preventDefault={lihatTransaksiLama}>
-                <div class="row">
-                    <div class="col">
-                        <input type="date" bind:value={transaksiLama} required class="form-control form-control-sm" />
-                    </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-sm btn-success"><i class="las la-search fs-2 me-2"></i>Lihat</button>
-                    </div>
-                </div>
-            </form>
+            <!-- CTRL + F ya lur🗿 -->
         </div>
     </div>
     <div class="card-body">
+
+        <form on:submit|preventDefault={lihatTransaksiLama}>
+            <div class="row">
+                <div class="col">
+                    <label for="tanggalDari" class="mb-2">
+                        <span class="text-gray-700 fs-6 fw-bolder">Tanggal Dari</span>
+                    </label>
+                    <input type="date" bind:value={transaksiStart} required class="form-control form-control-sm" />
+                </div>
+                <div class="col">
+                    <label for="tanggalSampai" class="mb-2">
+                        <span class="text-gray-700 fs-6 fw-bolder">Tanggal Sampai</span>
+                    </label>
+                    <input type="date" bind:value={transaksiEnd} required class="form-control form-control-sm" />
+                </div>
+                <div class="col">
+                    <label for="cariLaporan" class="mb-2">
+                        <span class="text-gray-700 fs-6 fw-bolder">Cari Laporan</span>
+                    </label>
+                    <button type="submit" class="btn btn-sm btn-success w-100"><i class="las la-search fs-2 me-2"></i>Mulai Pencarian</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="separator my-10"></div>
         
         <div class="table-responsive">
             <table class="table table-row-dashed table-row-gray-300 gy-2 table-hover align-middle text-center">

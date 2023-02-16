@@ -16,6 +16,11 @@
 
     let nominalTransfer:number
 
+    // Search Function
+    let searchString:string
+    let startDate:any
+    let endDate:any
+
     onMount(async () => {
         getData()
     })
@@ -75,6 +80,27 @@
         getData()
     }
 
+    async function doSearch(){
+
+        if(startDate == null || endDate == null){
+            return toast.error('Harap memilih rentang tanggal!')
+        }
+
+        const doPost        = await fetch(globalURL + 'Search-Saldo-Keluar', {
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                searchString    : searchString == null ? null : searchString ,
+                startDate       : startDate,
+                endDate         : endDate
+            })
+        });
+
+        const postResponse      = await doPost.json()
+        kasTransfer             = postResponse
+    }
+
 </script>
 
 <Toaster />
@@ -95,25 +121,25 @@
                 <label for="pencarianKasMasuk" class="d-flex align-items-center mb-2">
                     <span class="fs-6 fw-bolder">Pencarian</span>
                 </label>
-                <input type="text" placeholder="Kata kunci pencarian" class="form-control form-control-sm" />
+                <input type="text" bind:value={searchString} placeholder="Kata kunci pencarian" class="form-control form-control-sm" />
             </div>
 
             <div class="col-md-2 fv-row">
                 <label for="pencarianKasMasuk" class="d-flex align-items-center mb-2">
                     <span class="fs-6 fw-bolder">Periode s/d</span>
                 </label>
-                <input type="date" class="form-control form-control-sm" />
+                <input type="date" bind:value={startDate} class="form-control form-control-sm" />
             </div>
 
             <div class="col-md-2 fv-row">
                 <label for="pencarianKasMasuk" class="d-flex align-items-center mb-2">
                     <span class="fs-6 fw-bolder">Periode s/d</span>
                 </label>
-                <input type="date" class="form-control form-control-sm" />
+                <input type="date" bind:value={endDate} class="form-control form-control-sm" />
             </div>
 
             <div class="col-md-2 fv-row">
-                <button type="button" class="btn btn-sm btn-primary mt-8"><i class="las la-search fs-2 me-2"></i>Cari Kas Transfer</button>
+                <button type="button" on:click={doSearch} class="btn btn-sm btn-primary mt-8"><i class="las la-search fs-2 me-2"></i>Cari Kas Transfer</button>
             </div>
         </div>
 

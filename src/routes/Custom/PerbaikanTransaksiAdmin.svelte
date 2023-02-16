@@ -11,6 +11,7 @@
     let dataDetail                  = []
     let noTransaksiDetail:string    = 'Memuat..'
     let requestPerbaikan:string[]   = []
+    let totalPerbaikan:string       = currencyFormat.format(0)
 
     // Perbaikan Transaksi
     let tipeKesalahan:string
@@ -27,7 +28,9 @@
             method: 'GET',
             credentials: 'include'
         })
-        data                = await getData.json()
+        const getResponse   = await getData.json()
+        data                = getResponse.data
+        totalPerbaikan      = getResponse.totalPerbaikan
     })
 
     async function checkDetail(KODE){
@@ -111,7 +114,10 @@
                     {#each data as data, index }
                         <tr>
                             <td>{ index + 1 }</td>
-                            <td>{ data.CREATED_AT } WIB</td>
+                            <td>
+                                <span class="text-danger">{ data.JAM } WIB</span>
+                                <br> { data.CREATED_AT } 
+                            </td>
                             <td>{ data.NAMA }</td>
                             <td>
                                 {#if data.STATUS_PERBAIKAN == 'Pending' || data.STATUS_PERBAIKAN == 'Hold'}
@@ -131,13 +137,14 @@
                             <td><button on:click={ () => checkDetail(data.KODE) } data-bs-toggle="modal" data-bs-target="#modalDetail" type="button" class="btn btn-sm btn-primary">Lihat</button></td>
                         </tr>
                     {/each}
+                    <tr>
+                        <td colspan="5" class="text-center fw-bold">Nominal Permintaan Perbaikan</td>
+                        <td colspan="4" class="fw-bold text-center text-white bg-success">{currencyFormat.format(totalPerbaikan)}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
-    </div>
-    <div class="card-footer">
-        Footer
     </div>
 </div>
 
