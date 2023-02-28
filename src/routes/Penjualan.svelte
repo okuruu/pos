@@ -14,7 +14,7 @@
             <h3 class="card-title fw-bold">Penjualan</h3>
             <div class="card-toolbar">
                 <div class="me-2">
-                    <button type="button" on:click={ () => { currentPage = 'Penjualan' } } class="btn btn-sm btn-primary">Penjualan</button>
+                    <button type="button" on:click={ () => { currentPage = 'Penjualan' } } class="btn btn-sm btn-primary">Penjualan Kasir</button>
                     <button type="button" on:click={ () => { currentPage = 'Pesanan' } } class="btn btn-sm btn-success">Pesanan</button>
                     <button type="button" on:click={ () => { currentPage = 'Checkout' } } class="btn btn-sm btn-danger">Checkout</button>
                     <button type="button" on:click={ () => { currentPage = 'Daftar' } } class="btn btn-sm btn-info">Daftar Pesanan</button>

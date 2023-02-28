@@ -282,6 +282,21 @@
                         </select>
                     </div>
 
+                    <div class="fv-row my-4">
+                        <label for="kontakPemesanan" class="form-label fs-6 fw-bolder mb-3">Nomor WhatsApp</label>
+                        <input type="number" bind:value={kontakPemesanan} class="form-control form-control-sm" placeholder="085111111111" required />
+                    </div>
+
+                    <div class="fv-row my-4">
+                        <label for="tanggalTransaksi" class="form-label fs-6 fw-bolder mb-3">Tanggal Transaksi</label>
+                        <input type="datetime-local" bind:value={jamPengambilan} class="form-control form-control-sm" required />
+                    </div>
+
+                    <div class="fv-row mb-2">
+                        <label for="keteranganTambahan" class="form-label fs-6 fw-bolder mb-3">Keterangan Tambahan</label>
+                        <textarea class="form-control" bind:value={additionalInformation} rows="3" placeholder="Keterangan Untuk Transaksi Ini"></textarea>
+                    </div>
+
                     <div class="row mb-2">
                         <label for="cariMember" class="col-sm-4 col-form-label fw-bold fs-6">
                             <span>Cari Member</span>
@@ -289,6 +304,7 @@
                        
                         <AutoComplete searchFunction="{showMember}" delay="600" localFiltering={false} labelFieldName="NAMA" valueFieldName="KODE" bind:selectedItem="{selectedMembers}" class="form-control form-control-lg" placeholder="Cari Member.." hideArrow />
                     </div>
+
 
                     <button type="button" class="btn btn-primary w-100 mt-12" data-bs-toggle="modal" data-bs-target="#bayarPesanan"><i class="las la-wallet fs-2 me-2"></i>Pembayaran</button>
         

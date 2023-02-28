@@ -189,7 +189,8 @@
         if(!isSaved){
             return toast.error("Simpan transaksi terlebih dahulu!")
         }
-        window.open('/public/reports/'+ paperSize +'.html?last=' + lastTransactionID ,'_blank').focus()
+        window.open('/reports/'+ paperSize +'.html?last=' + lastTransactionID ,'_blank').focus()
+        // window.open('/public/reports/'+ paperSize +'.html?last=' + lastTransactionID ,'_blank').focus()
     }
     
 </script>

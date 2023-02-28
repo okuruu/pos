@@ -20,6 +20,9 @@
     let currentDeposit:number
     let historyDeposit:string[]     = []
 
+    // Checkbox Pengerjaan Pesanan
+    let isCompleteOnce:boolean      = false
+
     onMount(async () => {
         const getData = await fetch(globalURL + 'Daftar-Pesanan-Penjualan', {
             method: 'GET',
@@ -49,8 +52,28 @@
         transaksiDibuat = getResponse.TRANSAKSI_DIBUAT
         detailTransaksi = getResponse.DETAIL
         totalDeposit    = getResponse.DEPOSIT
-
         historyDeposit  = getResponse.SALDO
+
+    }
+
+    // Change Priority
+    async function changePriority(currentID,priorityStatus){
+        const doPost = await fetch(globalURL + 'Daftar-Pesanan-Penjualan/Rubah-Status', {
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials: 'include',
+            body : JSON.stringify({
+                ID              : currentID,
+                STATUS_PESANAN  : priorityStatus
+            })
+        })
+
+        const postResponse = await doPost.json()
+
+        if(postResponse == 'success'){
+            toast.success('Status diupdate')
+        }
+
     }
 
     async function doDeposit(){
@@ -69,6 +92,43 @@
         historyDeposit          = postResponse.SALDO
         totalDeposit            = postResponse.DEPOSIT
         toast.success("Berhasil menambahkan deposit!")
+    }
+
+    async function saveCurrentProcess(){
+        var inputID         = document.getElementsByName('ID[]')
+        var inputPCS        = document.getElementsByName('PCS[]')
+
+        let listID          = []
+        let listPCS         = []
+
+        var formFile = new FormData()
+
+        for(let i = 0 ; i < inputID.length; i++){
+            var totalID         = inputID[i].value
+            var totalPCS        = inputPCS[i].value
+            
+            listID.push(totalID)
+            listID = listID
+
+            listPCS.push(totalPCS)
+            listPCS = listPCS
+
+            formFile.append('ID[]', totalID)
+            formFile.append('PCS[]', totalPCS)
+        }
+
+        const doPost = await fetch(globalURL + 'Daftar-Pesanan-Penjualan/Detail-Proses-Pengerjaan',{
+            method: 'POST',
+            headers : { 'Content-Type' : 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                ID : listID,
+                PCS : listPCS
+            })
+        })
+
+        const doResponse = await doPost.json()
+        toast.success("Detail berhasil diupdate!")
     }
 
 </script>
@@ -93,11 +153,11 @@
                         <tr class="fw-bold">
                             <th>#</th>
                             <th>Tanggal Pesanan</th>
-                            <th>No Transaksi</th>
-                            <th>Staff PJ</th>
+                            <th>Detail & No Transaksi</th>
+                            <th>Staff Penjualan</th>
                             <th>Member</th>
                             <th>Total Transaksi</th>
-                            <th>Detail & Deposit</th>
+                            <th>Prioritas Pengerjaan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,12 +165,17 @@
                             <tr>
                                 <td>{ index + 1 }</td>
                                 <td>{ data.TRANSAKSI_DIBUAT }</td>
-                                <td>{ data.NOMOR_TRANSAKSI }</td>
+                                <td><button type="button" on:click={ () => getDetail(data.ID) } class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#rincianData">{ data.NOMOR_TRANSAKSI }</button></td>
                                 <td>{ data.PJ }</td>
                                 <td>{ data.MEMBER }</td>
                                 <td>{ currencyFormat.format(data.TOTAL_TRANSAKSI) }</td>
-                                <td><button type="button" on:click={ () => getDetail(data.ID) } class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#rincianData"><i class="las la-info-circle fs-2 me-2"></i>Data Rincian</button></td>
-                            </tr>                          
+                                <td>
+                                    <select bind:value={ data.STATUS_PESANAN } on:change={ () => changePriority(data.ID, data.STATUS_PESANAN) } class="form-select form-select-sm">
+                                        <option value="Belum Dikerjakan">Belum Dikerjakan</option>
+                                        <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                                    </select>
+                                </td>
+                            </tr>
                         {/each}
                     </tbody>
                 </table>
@@ -153,7 +218,7 @@
                 <div class="separator separator-content border-dark my-15"><span class="w-250px fw-bold">Detail Transaksi</span></div>
 
                 <div class="table-responsive">
-                    <table class="table table-row-dashed table-row-gray-300 align-middle mt-2 gy-3 ">
+                    <table class="table table-row-dashed table-row-gray-300 align-middle mt-7 gy-3 ">
                         <thead>
                             <tr class="fw-bold text-center">
                                 <th>#</th>
@@ -162,6 +227,7 @@
                                 <th>Harga</th>
                                 <th>Jumlah</th>
                                 <th>Total</th>
+                                <th>Sedang Dikerjakan(Pcs)</th>
                             </tr>
                         </thead>
                         {#each detailTransaksi as data,index }
@@ -172,9 +238,17 @@
                                 <td>{ currencyFormat.format(data.HARGA) }</td>
                                 <td>{ data.JUMLAH }</td>
                                 <td>{ currencyFormat.format(data.TOTAL_HARGA) }</td>
+                                <td>
+                                    <input type="number" name="ID[]" value="{ data.ID }" hidden />
+                                    <input type="number" name="PCS[]" value="{ data.PESANAN_DIKERJAKAN }" class="form-control form-control-sm" placeholder="Jumlah Sedang Diproses (Pcs)"/>
+                                </td>
                             </tr>
                         {/each}
                     </table>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="button" on:click={saveCurrentProcess} class="btn btn-sm btn-primary">Update Pesanan</button>
                 </div>
 
                 <div class="separator separator-content border-dark my-15"><span class="w-250px fw-bold">Deposit</span></div>
@@ -182,7 +256,7 @@
                 <div class="row mb-6">
                     <label for="tambahkanDeposit" class="col-lg-4 col-form-label required fw-bold fs-6">Tambah Nominal Deposit</label>
                     <div class="col-lg-4 fv-row">
-                        <input type="number" bind:value={currentDeposit} class="form-control form-control-lg form-control-solid" placeholder="Nominal Deposit"  inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
+                        <input type="number" bind:value={currentDeposit} class="form-control form-control-lg form-control-solid" placeholder="Nominal Deposit" inputMode='decimal' onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" />
                     </div>
                     <div class="col-lg-4 fv-row">
                         <button type="button" on:click={doDeposit} class="btn btn-lg btn-primary"><i class="las la-plus-circle fs-2 me-2"></i>Tambah Deposit</button>
