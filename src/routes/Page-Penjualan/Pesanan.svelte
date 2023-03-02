@@ -288,7 +288,7 @@
                     </div>
 
                     <div class="fv-row my-4">
-                        <label for="tanggalTransaksi" class="form-label fs-6 fw-bolder mb-3">Tanggal Transaksi</label>
+                        <label for="tanggalTransaksi" class="form-label fs-6 fw-bolder mb-3">Tanggal Kirim</label>
                         <input type="datetime-local" bind:value={jamPengambilan} class="form-control form-control-sm" required />
                     </div>
 
