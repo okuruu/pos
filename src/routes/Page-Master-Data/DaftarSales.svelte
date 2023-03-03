@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import toast, { Toaster } from 'svelte-french-toast'
     import { globalURL } from "../../lib/mainLink";
+    import toast, { Toaster } from 'svelte-french-toast'
 
     let data:string[]   = []
 

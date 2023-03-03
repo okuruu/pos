@@ -65,7 +65,7 @@
         currentID = null
         const doResponse = await doPost.json()
         toast.success(doResponse)
-        runFirst()
+        return runFirst()
     }
 
 </script>
