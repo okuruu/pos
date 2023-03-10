@@ -27,18 +27,17 @@
       },
       credentials: 'include',
       body: JSON.stringify({
-        email       : credentials.email,
+        nip         : credentials.email,
         password    : credentials.password
       })
     });
     
     const response = await loginAttempt.json();
-
     if(response.MESSAGE == 'Authenticated'){
       isAuthorized = true;
       return toast.success("Selamat Datang!");
     }
-      return toast.error("Uh-oh! Identitas anda tidak kami kenali")
+      return toast.error(response.MESSAGE)
   }
 
 </script>
@@ -56,7 +55,7 @@
                 <img src="/assets/images/logoDea.jpg" class="rounded-corner-logo mb-5" alt="Logo Dea Bakery" height="75" width="75" />
                 <h1 class="fw-bolder text-center mb-10">Login POS</h1>
                 <div class="form-group">
-                  <input type="email" bind:value={credentials.email} class="form-control rounded-input my-3 text-center" placeholder="Let's check your email" required />
+                  <input type="number" bind:value={credentials.email} class="form-control rounded-input my-3 text-center" placeholder="Let's check your email" required />
                   <input type="password" bind:value={credentials.password} class="form-control rounded-input my-3 text-center" placeholder="What about your password?" required />
                   <button type="submit" class="btn btn-sm fw-bold btn-danger w-100 hover-scale">Sign In</button>
                 </div>

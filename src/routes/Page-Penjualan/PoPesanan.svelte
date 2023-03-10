@@ -214,8 +214,7 @@
         })
 
         const postResp = await postData.json();
-
-        toast.success("Transaksi berhasil disimpan!")
+        postResp == 'OK' ? toast.success("Transaksi berhasil disimpan!") : toast.error(postResp)
     }
 </script>
 

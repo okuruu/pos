@@ -279,7 +279,7 @@
                             <tr class="text-center">
                                 <td>{index + 1}</td>
                                 <td>{ currencyFormat.format(deposit.SALDO) }</td>
-                                <td>{ deposit.KETERANGAN }</td>
+                                <td>Deposit Ke {index + 1}</td>
                                 <td>{ deposit.CREATED_AT } WIB</td>
                             </tr>
                         {/each}
