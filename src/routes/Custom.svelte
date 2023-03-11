@@ -1,6 +1,7 @@
 <script lang="ts">
     import PerbaikanTransaksi from "./Custom/PerbaikanTransaksi.svelte";
     import PerbaikanTransaksiAdmin from "./Custom/PerbaikanTransaksiAdmin.svelte";
+    import Pengaturan from "./Custom/Pengaturan.svelte";
 
     let currentPage:string = 'perbaikanTransaksi'
 </script>
@@ -14,6 +15,7 @@
                     <div class="separator my-3"></div>
                     <button type="button" on:click={ () => { currentPage = 'perbaikanTransaksi' } } class="btn btn-sm w-100 my-1 btn-danger">Perbaikan Transaksi</button>
                     <button type="button" on:click={ () => { currentPage = 'perbaikanTransaksiAdmin' } } class="btn btn-sm w-100 my-1 btn-danger">P. Transaksi (Admin)</button>
+                    <button type="button" on:click={ () => { currentPage = 'pengaturan' } } class="btn btn-sm w-100 my-1 btn-danger">Pengaturan</button>
                 </div>
             </div>
         </div>
@@ -23,6 +25,8 @@
                 <PerbaikanTransaksi />
             {:else if currentPage == 'perbaikanTransaksiAdmin' }
                 <PerbaikanTransaksiAdmin />
+            {:else if currentPage == 'pengaturan'}
+                <Pengaturan />
             {/if}
 
         </div>
